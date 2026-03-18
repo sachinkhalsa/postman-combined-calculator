@@ -6,455 +6,329 @@
 <title>Postman Combined Value Calculator</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        postman: { DEFAULT: '#FF6C37', hover: '#E05524', bg: '#FFF5F0', light: '#FFDFD0' },
-        agent: { DEFAULT: '#0265D2', light: '#60A5FA', bg: '#F0F7FF' },
-        aiei: { DEFAULT: '#7C3AED', light: '#A78BFA', bg: '#F5F3FF' }
-      }
-    }
-  }
-}
+tailwind.config={theme:{extend:{colors:{postman:{DEFAULT:'#FF6C37',hover:'#E05524',bg:'#FFF5F0',light:'#FFDFD0'},agent:{DEFAULT:'#0265D2',light:'#60A5FA',bg:'#F0F7FF'},aiei:{DEFAULT:'#7C3AED',light:'#A78BFA',bg:'#F5F3FF'}}}}}
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Inter', sans-serif; }
-input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; background: #FF6C37; height: 16px; width: 16px; border-radius: 50%; margin-top: -6px; cursor: pointer; }
-input[type=range]::-webkit-slider-runnable-track { background: #ddd; height: 4px; border-radius: 2px; }
-.aiei-slider::-webkit-slider-thumb { background: #7C3AED !important; }
-.accordion-body { max-height: 3000px; overflow: hidden; transition: max-height 0.3s ease, opacity 0.2s ease; opacity: 1; }
-.accordion-body.collapsed { max-height: 0; opacity: 0; }
-.accordion-chevron { transition: transform 0.3s ease; }
-.accordion-chevron.rotated { transform: rotate(-180deg); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.view-active { animation: fadeIn 0.4s ease-out forwards; }
-.tab-active { border-bottom: 3px solid #FF6C37; color: #FF6C37; font-weight: 600; }
-.tab-aiei-active { border-bottom: 3px solid #7C3AED; color: #7C3AED; font-weight: 600; }
-@media print { .no-print { display: none !important; } body { background: white; } }
+body{font-family:'Inter',sans-serif}
+.accordion-body{max-height:3000px;overflow:hidden;transition:max-height .3s ease,opacity .2s ease;opacity:1}
+.accordion-body.collapsed{max-height:0;opacity:0}
+.chevron{transition:transform .3s ease}
+.chevron.rotated{transform:rotate(-180deg)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .3s ease-out forwards}
+@media print{.no-print{display:none!important}body{background:#fff}}
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
 
 <!-- Header -->
-<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <div class="w-8 h-8 bg-postman rounded-lg flex items-center justify-center">
-        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
       </div>
-      <div>
-        <h1 class="text-lg font-bold text-gray-900">Combined Value Calculator</h1>
-        <p class="text-xs text-gray-500">Postman Value + AI Effectiveness Index</p>
-      </div>
+      <h1 class="text-lg font-bold text-gray-900">Postman Value Calculator</h1>
     </div>
-    <div class="flex items-center gap-4 no-print">
-      <button onclick="showView('calculator')" id="nav-calc" class="text-sm pb-1 tab-active cursor-pointer">Calculator</button>
-      <button onclick="showView('methodology')" id="nav-method" class="text-sm pb-1 text-gray-500 cursor-pointer hover:text-gray-700">Methodology</button>
+    <div class="flex gap-4 text-sm">
+      <button onclick="showPage('calc')" id="nav-calc" class="pb-1 font-semibold text-postman border-b-2 border-postman">Calculator</button>
+      <button onclick="showPage('method')" id="nav-method" class="pb-1 text-gray-400 hover:text-gray-600 border-b-2 border-transparent">Methodology</button>
     </div>
   </div>
 </header>
 
-<!-- Calculator View -->
-<div id="view-calculator" class="view-active">
-<div class="max-w-7xl mx-auto px-6 py-6">
+<!-- CALCULATOR PAGE -->
+<div id="page-calc">
+<div class="max-w-7xl mx-auto px-6 py-6 flex gap-6">
 
-  <!-- Step 1: Audience -->
-  <div class="mb-6">
-    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">1. Select Audience</h2>
-    <div class="grid grid-cols-3 gap-3">
-      <button onclick="setAudience('platform')" id="aud-platform" class="audience-card border-2 border-postman bg-postman-bg rounded-xl p-4 text-left transition-all">
-        <div class="font-semibold text-gray-900">Platform Eng.</div>
-        <div class="text-xs text-gray-500">Governance & Security</div>
-      </button>
-      <button onclick="setAudience('product')" id="aud-product" class="audience-card border-2 border-gray-200 bg-white rounded-xl p-4 text-left transition-all hover:border-postman/50">
-        <div class="font-semibold text-gray-900">Product Eng.</div>
-        <div class="text-xs text-gray-500">Velocity & Reuse</div>
-      </button>
-      <button onclick="setAudience('qe')" id="aud-qe" class="audience-card border-2 border-gray-200 bg-white rounded-xl p-4 text-left transition-all hover:border-postman/50">
-        <div class="font-semibold text-gray-900">Head of QE</div>
-        <div class="text-xs text-gray-500">Quality & Defects</div>
-      </button>
+<!-- LEFT COLUMN: Inputs -->
+<div class="flex-1 min-w-0 space-y-5">
+
+  <!-- 1. Audience -->
+  <section>
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">1. Select Audience</h2>
+    <div class="grid grid-cols-3 gap-2">
+      <button onclick="pickAud('platform')" id="aud-platform" class="aud-btn border-2 border-postman bg-postman-bg rounded-xl px-3 py-3 text-left"><div class="font-semibold text-sm">Platform Eng.</div><div class="text-[11px] text-gray-500">Governance & Security</div></button>
+      <button onclick="pickAud('product')" id="aud-product" class="aud-btn border-2 border-gray-200 bg-white rounded-xl px-3 py-3 text-left hover:border-postman/40"><div class="font-semibold text-sm">Product Eng.</div><div class="text-[11px] text-gray-500">Velocity & Reuse</div></button>
+      <button onclick="pickAud('qe')" id="aud-qe" class="aud-btn border-2 border-gray-200 bg-white rounded-xl px-3 py-3 text-left hover:border-postman/40"><div class="font-semibold text-sm">Head of QE</div><div class="text-[11px] text-gray-500">Quality & Defects</div></button>
     </div>
-    <!-- Agent Mode Toggle -->
-    <div class="mt-3 flex items-center gap-3 bg-agent-bg border border-agent/20 rounded-xl px-4 py-3 no-print">
-      <label class="relative inline-flex items-center cursor-pointer">
-        <input type="checkbox" id="agentMode" checked class="sr-only peer">
-        <div class="w-9 h-5 bg-gray-300 peer-checked:bg-agent rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
-      </label>
-      <div>
-        <span class="font-medium text-sm">Enable Agent Mode (V12+)</span>
-        <span class="text-xs text-gray-500 ml-1">Unlocks AI test generation, spec authoring, and shadow API discovery.</span>
-      </div>
+    <div class="mt-2 flex items-center gap-3 bg-agent-bg border border-agent/20 rounded-xl px-4 py-2.5">
+      <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="agentMode" checked class="sr-only peer"><div class="w-9 h-5 bg-gray-300 peer-checked:bg-agent rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div></label>
+      <span class="text-sm font-medium">Agent Mode (V12+)</span>
+      <span class="text-[11px] text-gray-400">AI test gen, spec authoring, shadow API discovery</span>
     </div>
-  </div>
+  </section>
 
-  <!-- Step 2: Company Profile -->
-  <div class="mb-6">
-    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">2. Company Profile <span class="text-xs font-normal text-gray-400">Auto-Scales</span></h2>
-    <div class="flex gap-3 mb-3">
-      <button onclick="setOrgSize(50)" id="org-50" class="flex-1 border-2 border-postman bg-postman-bg rounded-xl p-3 text-center transition-all">
-        <div class="font-semibold text-sm">Mid-Market</div>
-        <div class="text-xs text-gray-500">~50 developers</div>
-      </button>
-      <button onclick="setOrgSize(200)" id="org-200" class="flex-1 border-2 border-gray-200 bg-white rounded-xl p-3 text-center transition-all hover:border-postman/50">
-        <div class="font-semibold text-sm">Large</div>
-        <div class="text-xs text-gray-500">~200 developers</div>
-      </button>
-      <button onclick="setOrgSize(1000)" id="org-1000" class="flex-1 border-2 border-gray-200 bg-white rounded-xl p-3 text-center transition-all hover:border-postman/50">
-        <div class="font-semibold text-sm">Enterprise</div>
-        <div class="text-xs text-gray-500">~1,000 developers</div>
-      </button>
+  <!-- 2. Company Profile -->
+  <section>
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">2. Company Profile</h2>
+    <div class="flex gap-2 mb-2">
+      <button onclick="pickOrg(50)" id="org-50" class="org-btn flex-1 border-2 border-postman bg-postman-bg rounded-xl py-2 text-center"><div class="font-semibold text-sm">Mid-Market</div><div class="text-[11px] text-gray-500">~50 devs</div></button>
+      <button onclick="pickOrg(200)" id="org-200" class="org-btn flex-1 border-2 border-gray-200 bg-white rounded-xl py-2 text-center hover:border-postman/40"><div class="font-semibold text-sm">Large</div><div class="text-[11px] text-gray-500">~200 devs</div></button>
+      <button onclick="pickOrg(1000)" id="org-1000" class="org-btn flex-1 border-2 border-gray-200 bg-white rounded-xl py-2 text-center hover:border-postman/40"><div class="font-semibold text-sm">Enterprise</div><div class="text-[11px] text-gray-500">~1,000 devs</div></button>
     </div>
-    <div class="grid grid-cols-4 gap-3">
-      <div><label class="text-xs text-gray-500">Total Developers</label><input type="number" id="totalDevs" value="50" min="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman focus:ring-1 focus:ring-postman outline-none"></div>
-      <div><label class="text-xs text-gray-500">Avg Hourly Cost ($)</label><input type="number" id="hourlyRate" value="80" min="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman focus:ring-1 focus:ring-postman outline-none"></div>
-      <div><label class="text-xs text-gray-500">New Hires / Year</label><input type="number" id="newHires" value="10" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman focus:ring-1 focus:ring-postman outline-none"></div>
-      <div><label class="text-xs text-gray-500">Annual Releases</label><input type="number" id="annualReleases" value="24" min="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman focus:ring-1 focus:ring-postman outline-none"></div>
+    <div class="grid grid-cols-4 gap-2">
+      <div><label class="text-[11px] text-gray-500">Developers</label><input type="number" id="totalDevs" value="50" min="1" class="inp w-full"></div>
+      <div><label class="text-[11px] text-gray-500">Hourly Cost ($)</label><input type="number" id="hourlyRate" value="80" min="1" class="inp w-full"></div>
+      <div><label class="text-[11px] text-gray-500">New Hires/Yr</label><input type="number" id="newHires" value="10" min="0" class="inp w-full"></div>
+      <div><label class="text-[11px] text-gray-500">Releases/Yr</label><input type="number" id="annualReleases" value="24" min="1" class="inp w-full"></div>
     </div>
-  </div>
+  </section>
 
-  <!-- Two-panel layout -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <!-- 3. Pain Points - TABBED: BVA / AIEI -->
+  <section>
+    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">3. Discovery</h2>
+    <div class="flex border-b border-gray-200 mb-3">
+      <button onclick="showTab('bva')" id="tab-bva" class="px-4 py-2 text-sm font-semibold text-postman border-b-2 border-postman">Postman Value</button>
+      <button onclick="showTab('aiei')" id="tab-aiei" class="px-4 py-2 text-sm text-gray-400 border-b-2 border-transparent hover:text-gray-600">AI Effectiveness</button>
+    </div>
 
-    <!-- LEFT: BVA Inputs -->
-    <div>
-      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">3. Postman Value: Pain Points</h2>
-
+    <!-- BVA TAB -->
+    <div id="panel-bva" class="space-y-2">
       <!-- Save Money -->
-      <div class="bg-white border border-gray-200 rounded-xl mb-3 overflow-hidden">
-        <button onclick="toggleAccordion('save')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50">
-          <span class="font-semibold text-sm">💰 SAVE MONEY</span>
-          <svg id="chev-save" class="accordion-chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div id="acc-save" class="accordion-body px-4 pb-4">
-          <div class="space-y-3">
-            <div><label class="text-xs text-gray-500">Hours lost/week (env setup, debugging)</label><input type="number" id="hoursLost" value="3" min="0" step="0.5" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-gray-500">Net New APIs/Year</label><input type="number" id="netNewApis" value="20" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-              <div><label class="text-xs text-gray-500">Hours per API (Design)</label><input type="number" id="hrsPerApi" value="8" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <button onclick="tog('save')" class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50"><span class="font-semibold text-sm">💰 Save Money</span><svg id="ch-save" class="chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+        <div id="ac-save" class="accordion-body px-4 pb-3">
+          <div class="space-y-2">
+            <div><label class="text-[11px] text-gray-500">Hours lost/week (setup, debugging)</label><input type="number" id="hoursLost" value="3" min="0" step="0.5" class="inp w-full"></div>
+            <div class="grid grid-cols-2 gap-2">
+              <div><label class="text-[11px] text-gray-500">Net New APIs/Yr</label><input type="number" id="netNewApis" value="20" min="0" class="inp w-full"></div>
+              <div><label class="text-[11px] text-gray-500">Hrs per API (Design)</label><input type="number" id="hrsPerApi" value="8" min="0" class="inp w-full"></div>
             </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-gray-500">Integrations/Year</label><input type="number" id="integrationsYear" value="12" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-              <div><label class="text-xs text-gray-500">Current TTFC (Hours)</label><input type="number" id="ttfcHours" value="4" min="0" step="0.5" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
+            <div class="grid grid-cols-2 gap-2">
+              <div><label class="text-[11px] text-gray-500">Integrations/Yr</label><input type="number" id="integrationsYear" value="12" min="0" class="inp w-full"></div>
+              <div><label class="text-[11px] text-gray-500">Current TTFC (Hrs)</label><input type="number" id="ttfcHours" value="4" min="0" step="0.5" class="inp w-full"></div>
             </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-gray-500">QA Engineers</label><input type="number" id="qaEngineers" value="5" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-              <div><label class="text-xs text-gray-500">Avg QA Salary ($)</label><input type="number" id="qaSalary" value="120000" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
+            <div class="grid grid-cols-2 gap-2">
+              <div><label class="text-[11px] text-gray-500">QA Engineers</label><input type="number" id="qaEngineers" value="5" min="0" class="inp w-full"></div>
+              <div><label class="text-[11px] text-gray-500">Avg QA Salary ($)</label><input type="number" id="qaSalary" value="120000" min="0" class="inp w-full"></div>
             </div>
-            <div><label class="text-xs text-gray-500">Regression Cycle (Hours)</label><input type="number" id="regressionCycle" value="20" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
+            <div><label class="text-[11px] text-gray-500">Regression Cycle (Hrs)</label><input type="number" id="regressionCycle" value="20" min="0" class="inp w-full"></div>
           </div>
         </div>
       </div>
-
       <!-- Reduce Risk -->
-      <div class="bg-white border border-gray-200 rounded-xl mb-3 overflow-hidden">
-        <button onclick="toggleAccordion('risk')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50">
-          <span class="font-semibold text-sm">🛡️ REDUCE RISK</span>
-          <svg id="chev-risk" class="accordion-chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div id="acc-risk" class="accordion-body px-4 pb-4">
-          <div class="space-y-3">
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-gray-500">PRs Reviewed/Year</label><input type="number" id="prsReviewed" value="500" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-              <div><label class="text-xs text-gray-500">Mins per Review</label><input type="number" id="minsPerReview" value="15" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-gray-500">Outages/Year</label><input type="number" id="outagesYear" value="4" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-              <div><label class="text-xs text-gray-500">Cost per Outage ($)</label><input type="number" id="costPerOutage" value="50000" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-gray-500">✨ Undiscovered APIs (est)</label><input type="number" id="undiscoveredApis" value="5" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-              <div><label class="text-xs text-gray-500">✨ Incident Cost ($)</label><input type="number" id="incidentCost" value="10000" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-            </div>
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <button onclick="tog('risk')" class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50"><span class="font-semibold text-sm">🛡️ Reduce Risk</span><svg id="ch-risk" class="chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+        <div id="ac-risk" class="accordion-body px-4 pb-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[11px] text-gray-500">PRs Reviewed/Yr</label><input type="number" id="prsReviewed" value="500" min="0" class="inp w-full"></div>
+            <div><label class="text-[11px] text-gray-500">Mins per Review</label><input type="number" id="minsPerReview" value="15" min="0" class="inp w-full"></div>
+            <div><label class="text-[11px] text-gray-500">Outages/Yr</label><input type="number" id="outagesYear" value="4" min="0" class="inp w-full"></div>
+            <div><label class="text-[11px] text-gray-500">Cost per Outage ($)</label><input type="number" id="costPerOutage" value="50000" min="0" class="inp w-full"></div>
+            <div><label class="text-[11px] text-gray-500">✨ Undiscovered APIs</label><input type="number" id="undiscoveredApis" value="5" min="0" class="inp w-full"></div>
+            <div><label class="text-[11px] text-gray-500">✨ Incident Cost ($)</label><input type="number" id="incidentCost" value="10000" min="0" class="inp w-full"></div>
           </div>
         </div>
       </div>
-
       <!-- Drive Growth -->
-      <div class="bg-white border border-gray-200 rounded-xl mb-3 overflow-hidden">
-        <button onclick="toggleAccordion('growth')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50">
-          <span class="font-semibold text-sm">📈 DRIVE GROWTH</span>
-          <svg id="chev-growth" class="accordion-chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div id="acc-growth" class="accordion-body px-4 pb-4">
-          <div class="space-y-3">
-            <div class="grid grid-cols-3 gap-3">
-              <div><label class="text-xs text-gray-500">Weekly Revenue Impact ($)</label><input type="number" id="weeklyRevenue" value="50000" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-              <div><label class="text-xs text-gray-500">Delayed Releases/Yr</label><input type="number" id="delayedReleases" value="3" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-              <div><label class="text-xs text-gray-500">Avg Delay (Weeks)</label><input type="number" id="avgDelayWeeks" value="2" min="0" step="0.5" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
-            </div>
-            <div><label class="text-xs text-gray-500">Redundant Projects/Year</label><input type="number" id="redundantProjects" value="1" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-postman outline-none"></div>
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <button onclick="tog('growth')" class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50"><span class="font-semibold text-sm">📈 Drive Growth</span><svg id="ch-growth" class="chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+        <div id="ac-growth" class="accordion-body px-4 pb-3">
+          <div class="grid grid-cols-3 gap-2">
+            <div><label class="text-[11px] text-gray-500">Weekly Rev Impact ($)</label><input type="number" id="weeklyRevenue" value="50000" min="0" class="inp w-full"></div>
+            <div><label class="text-[11px] text-gray-500">Delayed Releases/Yr</label><input type="number" id="delayedReleases" value="3" min="0" class="inp w-full"></div>
+            <div><label class="text-[11px] text-gray-500">Avg Delay (Wks)</label><input type="number" id="avgDelayWeeks" value="2" min="0" step="0.5" class="inp w-full"></div>
           </div>
+          <div class="mt-2"><label class="text-[11px] text-gray-500">Redundant Projects/Yr</label><input type="number" id="redundantProjects" value="1" min="0" class="inp w-full"></div>
         </div>
       </div>
+    </div>
 
-      <!-- AIEI Inputs -->
-      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 mt-6">4. AI Effectiveness (AIEI)</h2>
-
-      <div class="mb-3">
-        <label class="text-xs text-gray-500">Weight Profile</label>
-        <div class="flex gap-2 mt-1">
-          <button onclick="setWeight('quality')" id="wp-quality" class="weight-btn text-xs px-3 py-1.5 rounded-full border-2 border-aiei bg-aiei-bg text-aiei font-medium">Quality</button>
-          <button onclick="setWeight('speed')" id="wp-speed" class="weight-btn text-xs px-3 py-1.5 rounded-full border-2 border-gray-200 text-gray-600 hover:border-aiei/50">Speed</button>
-          <button onclick="setWeight('reliability')" id="wp-reliability" class="weight-btn text-xs px-3 py-1.5 rounded-full border-2 border-gray-200 text-gray-600 hover:border-aiei/50">Reliability</button>
-          <button onclick="setWeight('cost')" id="wp-cost" class="weight-btn text-xs px-3 py-1.5 rounded-full border-2 border-gray-200 text-gray-600 hover:border-aiei/50">Cost</button>
-          <button onclick="setWeight('balanced')" id="wp-balanced" class="weight-btn text-xs px-3 py-1.5 rounded-full border-2 border-gray-200 text-gray-600 hover:border-aiei/50">Balanced</button>
-        </div>
+    <!-- AIEI TAB -->
+    <div id="panel-aiei" class="hidden space-y-2">
+      <div class="flex gap-1.5 mb-2">
+        <button onclick="pickW('quality')" id="wp-quality" class="wp-btn text-[11px] px-3 py-1 rounded-full border-2 border-aiei bg-aiei-bg text-aiei font-medium">Quality</button>
+        <button onclick="pickW('speed')" id="wp-speed" class="wp-btn text-[11px] px-3 py-1 rounded-full border-2 border-gray-200 text-gray-500">Speed</button>
+        <button onclick="pickW('reliability')" id="wp-reliability" class="wp-btn text-[11px] px-3 py-1 rounded-full border-2 border-gray-200 text-gray-500">Reliability</button>
+        <button onclick="pickW('cost')" id="wp-cost" class="wp-btn text-[11px] px-3 py-1 rounded-full border-2 border-gray-200 text-gray-500">Cost</button>
+        <button onclick="pickW('balanced')" id="wp-balanced" class="wp-btn text-[11px] px-3 py-1 rounded-full border-2 border-gray-200 text-gray-500">Balanced</button>
       </div>
-
       <!-- Q -->
-      <div class="bg-white border border-gray-200 rounded-xl mb-3 overflow-hidden">
-        <button onclick="toggleAccordion('q')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50">
-          <span class="font-semibold text-sm text-aiei">Q: Quality</span>
-          <svg id="chev-q" class="accordion-chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div id="acc-q" class="accordion-body px-4 pb-4">
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="text-xs text-gray-500">Defect Rate (AI)</label><input type="number" id="defectRateAI" value="0.05" min="0" max="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Defect Rate (Non-AI)</label><input type="number" id="defectRateNonAI" value="0.08" min="0" max="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Test Pass Delta</label><input type="number" id="testPassDelta" value="0.95" min="0" max="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Rework Rate (AI)</label><input type="number" id="reworkRateAI" value="0.15" min="0" max="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-          </div>
-        </div>
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <button onclick="tog('q')" class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50"><span class="font-semibold text-sm text-aiei">Q: Quality</span><svg id="ch-q" class="chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+        <div id="ac-q" class="accordion-body px-4 pb-3"><div class="grid grid-cols-2 gap-2">
+          <div><label class="text-[11px] text-gray-500">Defect Rate (AI)</label><input type="number" id="defectRateAI" value="0.05" min="0" max="1" step="0.01" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Defect Rate (Non-AI)</label><input type="number" id="defectRateNonAI" value="0.08" min="0" max="1" step="0.01" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Test Pass Delta</label><input type="number" id="testPassDelta" value="0.95" min="0" max="1" step="0.01" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Rework Rate (AI)</label><input type="number" id="reworkRateAI" value="0.15" min="0" max="1" step="0.01" class="inp w-full ai"></div>
+        </div></div>
       </div>
-
       <!-- L -->
-      <div class="bg-white border border-gray-200 rounded-xl mb-3 overflow-hidden">
-        <button onclick="toggleAccordion('l')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50">
-          <span class="font-semibold text-sm text-aiei">L: Lead Time</span>
-          <svg id="chev-l" class="accordion-chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div id="acc-l" class="accordion-body px-4 pb-4">
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="text-xs text-gray-500">Cycle Time AI (hrs)</label><input type="number" id="cycleTimeAI" value="12" min="0" step="0.5" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Cycle Time Non-AI (hrs)</label><input type="number" id="cycleTimeNonAI" value="20" min="0" step="0.5" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-          </div>
-        </div>
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <button onclick="tog('l')" class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50"><span class="font-semibold text-sm text-aiei">L: Lead Time</span><svg id="ch-l" class="chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+        <div id="ac-l" class="accordion-body px-4 pb-3"><div class="grid grid-cols-2 gap-2">
+          <div><label class="text-[11px] text-gray-500">Cycle Time AI (hrs)</label><input type="number" id="cycleTimeAI" value="12" min="0" step="0.5" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Cycle Time Non-AI (hrs)</label><input type="number" id="cycleTimeNonAI" value="20" min="0" step="0.5" class="inp w-full ai"></div>
+        </div></div>
       </div>
-
       <!-- R -->
-      <div class="bg-white border border-gray-200 rounded-xl mb-3 overflow-hidden">
-        <button onclick="toggleAccordion('r')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50">
-          <span class="font-semibold text-sm text-aiei">R: Reliability</span>
-          <svg id="chev-r" class="accordion-chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div id="acc-r" class="accordion-body px-4 pb-4">
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="text-xs text-gray-500">CFR (AI)</label><input type="number" id="cfrAI" value="0.05" min="0" max="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">SLO Attainment</label><input type="number" id="sloAttainment" value="0.95" min="0" max="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Contract Catch Rate</label><input type="number" id="contractCatch" value="0.90" min="0" max="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Uptime (AI-managed)</label><input type="number" id="uptimeAI" value="0.99" min="0" max="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-          </div>
-          <div class="mt-3"><label class="text-xs text-gray-500">Adaptability (retry success)</label><input type="number" id="adaptability" value="0.85" min="0" max="1" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-        </div>
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <button onclick="tog('r')" class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50"><span class="font-semibold text-sm text-aiei">R: Reliability</span><svg id="ch-r" class="chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+        <div id="ac-r" class="accordion-body px-4 pb-3"><div class="grid grid-cols-2 gap-2">
+          <div><label class="text-[11px] text-gray-500">CFR (AI)</label><input type="number" id="cfrAI" value="0.05" min="0" max="1" step="0.01" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">SLO Attainment</label><input type="number" id="sloAttainment" value="0.95" min="0" max="1" step="0.01" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Contract Catch Rate</label><input type="number" id="contractCatch" value="0.90" min="0" max="1" step="0.01" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Uptime (AI)</label><input type="number" id="uptimeAI" value="0.99" min="0" max="1" step="0.01" class="inp w-full ai"></div>
+        </div><div class="mt-2"><label class="text-[11px] text-gray-500">Adaptability</label><input type="number" id="adaptability" value="0.85" min="0" max="1" step="0.01" class="inp w-full ai"></div></div>
       </div>
-
       <!-- C -->
-      <div class="bg-white border border-gray-200 rounded-xl mb-3 overflow-hidden">
-        <button onclick="toggleAccordion('c')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50">
-          <span class="font-semibold text-sm text-aiei">C: Cost Efficiency</span>
-          <svg id="chev-c" class="accordion-chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div id="acc-c" class="accordion-body px-4 pb-4">
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="text-xs text-gray-500">Labor Value Saved ($)</label><input type="number" id="laborSaved" value="150000" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Overhead / Verify Tax ($)</label><input type="number" id="overheadValue" value="30000" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Token Cost ($)</label><input type="number" id="tokenCost" value="20000" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Infra Cost ($)</label><input type="number" id="infraCost" value="10000" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Tooling Cost ($)</label><input type="number" id="toolingCost" value="15000" min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-            <div><label class="text-xs text-gray-500">Target ROI</label><input type="number" id="targetROI" value="2" min="0.1" step="0.1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-aiei outline-none"></div>
-          </div>
-        </div>
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <button onclick="tog('c')" class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50"><span class="font-semibold text-sm text-aiei">C: Cost Efficiency</span><svg id="ch-c" class="chevron w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+        <div id="ac-c" class="accordion-body px-4 pb-3"><div class="grid grid-cols-2 gap-2">
+          <div><label class="text-[11px] text-gray-500">Labor Saved ($)</label><input type="number" id="laborSaved" value="150000" min="0" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Overhead / Verify Tax ($)</label><input type="number" id="overheadValue" value="30000" min="0" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Token Cost ($)</label><input type="number" id="tokenCost" value="20000" min="0" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Infra Cost ($)</label><input type="number" id="infraCost" value="10000" min="0" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Tooling Cost ($)</label><input type="number" id="toolingCost" value="15000" min="0" class="inp w-full ai"></div>
+          <div><label class="text-[11px] text-gray-500">Target ROI</label><input type="number" id="targetROI" value="2" min="0.1" step="0.1" class="inp w-full ai"></div>
+        </div></div>
       </div>
     </div>
+  </section>
+</div>
 
-    <!-- RIGHT: Live Output -->
-    <div>
-      <div class="sticky top-20">
-        <!-- Executive Summary -->
-        <div class="bg-white border border-gray-200 rounded-xl p-5 mb-4">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="font-bold text-gray-900">Executive Value Summary</h3>
-            <div class="flex gap-2 no-print">
-              <button onclick="exportPDF()" class="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-600 transition-colors">Export PDF</button>
-              <button onclick="copyOutput()" id="copyBtn" class="text-xs px-3 py-1.5 bg-postman/10 hover:bg-postman/20 rounded-lg text-postman font-medium transition-colors">Copy Output</button>
-            </div>
-          </div>
-          <p id="heroLine" class="text-sm text-gray-600 italic mb-4">"Postman Enterprise will drive <span id="heroValue" class="font-bold text-postman">$0</span> in annual efficiency gains while achieving an AI effectiveness score of <span id="heroAIEI" class="font-bold text-aiei">0.00</span>."</p>
-
-          <div class="space-y-4">
-            <div>
-              <h4 class="text-xs font-semibold text-gray-500 uppercase mb-2">1. Strategic Outcomes</h4>
-              <div class="space-y-1 text-sm" id="stratOutcomes">
-                <div class="text-gray-400 italic">Enter inputs and calculate to see outcomes.</div>
-              </div>
-            </div>
-            <div>
-              <h4 class="text-xs font-semibold text-gray-500 uppercase mb-2">2. Operational Impact</h4>
-              <div class="space-y-1 text-sm" id="opImpact">
-                <div class="text-gray-400 italic">-</div>
-              </div>
-            </div>
-            <div>
-              <h4 class="text-xs font-semibold text-gray-500 uppercase mb-2">3. ROI Summary</h4>
-              <p id="roiLine" class="text-sm text-gray-600">"By investing <span id="roiInvest">$0</span>, the team creates <span id="roiValue">$0</span> in value (<span id="roiX">0x</span> ROI)."</p>
-            </div>
-          </div>
+<!-- RIGHT COLUMN: Live Summary (sticky) -->
+<div class="w-[380px] shrink-0 hidden lg:block">
+  <div class="sticky top-16 space-y-3">
+    <!-- BVA Summary -->
+    <div class="bg-white border border-gray-200 rounded-xl p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-sm text-gray-900">Executive Value Summary</h3>
+        <div class="flex gap-1.5 no-print">
+          <button onclick="xPDF()" class="text-[11px] px-2.5 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-500">PDF</button>
+          <button onclick="xCopy()" id="copyBtn" class="text-[11px] px-2.5 py-1 bg-postman/10 hover:bg-postman/20 rounded-lg text-postman font-medium">Copy</button>
         </div>
-
-        <!-- AIEI Score Card -->
-        <div class="bg-aiei-bg border border-aiei/20 rounded-xl p-5 mb-4">
-          <h3 class="font-bold text-aiei mb-3">AI Effectiveness Index (AIEI)</h3>
-          <div class="flex items-center gap-4 mb-3">
-            <div class="text-4xl font-bold text-aiei" id="aieiScore">0.00</div>
-            <div id="aieiClass" class="text-sm px-3 py-1 rounded-full bg-gray-200 text-gray-600">Pending</div>
-          </div>
-          <div class="grid grid-cols-4 gap-2">
-            <div class="text-center p-2 bg-white rounded-lg"><div class="text-xs text-gray-500">Q</div><div class="font-bold text-sm" id="qVal">-</div></div>
-            <div class="text-center p-2 bg-white rounded-lg"><div class="text-xs text-gray-500">L</div><div class="font-bold text-sm" id="lVal">-</div></div>
-            <div class="text-center p-2 bg-white rounded-lg"><div class="text-xs text-gray-500">R</div><div class="font-bold text-sm" id="rVal">-</div></div>
-            <div class="text-center p-2 bg-white rounded-lg"><div class="text-xs text-gray-500">C</div><div class="font-bold text-sm" id="cVal">-</div></div>
-          </div>
-        </div>
-
-        <!-- Connector Callout -->
-        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs text-gray-500">
-          <p class="font-medium text-gray-700 mb-1">This is an estimate. For measured results, run the AIEI Tool in Postman.</p>
-          <p><strong>Live connectors:</strong> Postman API, Monitor, GitHub, SonarQube, Datadog, Entire.io, DX</p>
-          <p><strong>Roadmap:</strong> PagerDuty, Linear, AWS, Azure, GCP, ServiceNow, Cloudflare, Vercel, Supabase, OpenAI, Anthropic, Google AI</p>
-          <p><strong>MCP:</strong> AWS Labs (25+ servers), SonarQube MCP, Slack MCP, Postman API MCP</p>
-        </div>
-
-        <button onclick="calculate()" class="w-full mt-4 bg-postman hover:bg-postman-hover text-white font-semibold py-3 rounded-xl transition-colors no-print">Calculate</button>
+      </div>
+      <p class="text-sm text-gray-600 mb-3" id="heroLine">"Postman will drive <span class="font-bold text-postman" id="heroVal">$0</span> in annual efficiency gains."</p>
+      <div class="space-y-3">
+        <div><h4 class="text-[11px] font-semibold text-gray-400 uppercase mb-1">Strategic Outcomes</h4><div id="stratOut" class="text-sm text-gray-500 italic">Run Calculate to see results</div></div>
+        <div><h4 class="text-[11px] font-semibold text-gray-400 uppercase mb-1">Top Drivers</h4><div id="topDrivers" class="text-sm text-gray-400">-</div></div>
+        <div><h4 class="text-[11px] font-semibold text-gray-400 uppercase mb-1">ROI</h4><p class="text-sm text-gray-600" id="roiLine">Invest <span id="roiI">$0</span> → <span id="roiV">$0</span> value (<span id="roiX" class="font-bold text-postman">0x</span>)</p></div>
       </div>
     </div>
+    <!-- AIEI Card -->
+    <div class="bg-aiei-bg border border-aiei/20 rounded-xl p-4">
+      <h3 class="font-bold text-sm text-aiei mb-2">AI Effectiveness (AIEI)</h3>
+      <div class="flex items-center gap-3 mb-2">
+        <div class="text-3xl font-bold text-aiei" id="aieiScore">0.00</div>
+        <span id="aieiCls" class="text-[11px] px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-500">Pending</span>
+      </div>
+      <div class="grid grid-cols-4 gap-1.5">
+        <div class="text-center p-1.5 bg-white rounded-lg"><div class="text-[10px] text-gray-400">Q</div><div class="font-bold text-xs" id="qV">-</div></div>
+        <div class="text-center p-1.5 bg-white rounded-lg"><div class="text-[10px] text-gray-400">L</div><div class="font-bold text-xs" id="lV">-</div></div>
+        <div class="text-center p-1.5 bg-white rounded-lg"><div class="text-[10px] text-gray-400">R</div><div class="font-bold text-xs" id="rV">-</div></div>
+        <div class="text-center p-1.5 bg-white rounded-lg"><div class="text-[10px] text-gray-400">C</div><div class="font-bold text-xs" id="cV">-</div></div>
+      </div>
+    </div>
+    <!-- Connectors -->
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-[11px] text-gray-400">
+      <p class="text-gray-600 font-medium mb-1">Estimate mode. For real data, run the AIEI Tool in Postman (19+ connectors).</p>
+      <p><strong>Live:</strong> Postman API, Monitor, GitHub, SonarQube, Datadog, Entire.io, DX</p>
+    </div>
+    <button onclick="calc()" class="w-full bg-postman hover:bg-postman-hover text-white font-semibold py-2.5 rounded-xl transition-colors no-print">Calculate</button>
   </div>
+</div>
+
+<!-- Mobile Calculate button -->
+<div class="lg:hidden fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-gray-200 no-print">
+  <button onclick="calc()" class="w-full bg-postman hover:bg-postman-hover text-white font-semibold py-2.5 rounded-xl">Calculate</button>
+</div>
+
 </div>
 </div>
 
-<!-- Methodology View -->
-<div id="view-methodology" class="hidden">
-<div class="max-w-4xl mx-auto px-6 py-8">
-  <div class="flex items-center justify-between mb-6">
-    <h2 class="text-xl font-bold text-gray-900">Methodology</h2>
-    <button onclick="showView('calculator')" class="text-sm text-postman hover:underline no-print">Back to Calculator</button>
-  </div>
-  <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6">
-    <h3 class="font-bold text-postman mb-3">Postman Value (BVA)</h3>
-    <p class="text-sm text-gray-600 mb-3">Formulas based on Forrester TEI, customer benchmarks, Postman State of API. See <a href="https://philipkang-io.github.io/bva/" target="_blank" class="text-postman hover:underline">Phil's BVA Calculator</a> for full methodology and sources.</p>
-    <div class="space-y-2 text-sm text-gray-700">
-      <div class="bg-gray-50 rounded-lg p-3"><strong>Productivity:</strong> Devs x (Saved x 0.5) x 52 x Rate. Agent Mode: x 1.35</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>Governance:</strong> PRs x Mins/60 x ArchRate x 0.9</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>Shadow API Discovery:</strong> Undiscovered_APIs x Cost x 0.5</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>Outages:</strong> Outages x Cost x 0.3 x 0.5</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>Integration:</strong> Int x (TTFC - 0.25) x Rate</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>API Design:</strong> APIs x Hrs x 0.25 x Rate x 0.5 (Agent: 0.45)</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>Cost of Delay:</strong> Impact x Releases x Weeks x 0.50 (Agent: 0.60)</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>FTE Efficiency:</strong> QA_Engs x Salary x 65% x 50% (Agent: 80%)</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>Test Compression:</strong> Releases x Cycle_Hrs x 95% x Rate</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>Avoided Rework:</strong> Projects x 3 Devs x 3 Months x Rate</div>
+<!-- METHODOLOGY PAGE -->
+<div id="page-method" class="hidden">
+<div class="max-w-3xl mx-auto px-6 py-8">
+  <h2 class="text-xl font-bold mb-4">Methodology</h2>
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-4">
+    <h3 class="font-bold text-postman mb-2">Postman Value (BVA)</h3>
+    <p class="text-sm text-gray-600 mb-3">Based on Forrester TEI, customer benchmarks, Postman State of API. See <a href="https://philipkang-io.github.io/bva/" target="_blank" class="text-postman hover:underline">Phil's BVA Calculator</a> for full methodology.</p>
+    <div class="space-y-1.5 text-sm text-gray-700">
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Productivity:</strong> Devs x (Saved x 0.5) x 52 x Rate (Agent: x1.35)</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Governance:</strong> PRs x Mins/60 x ArchRate x 0.9</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Shadow API:</strong> Undiscovered x Cost x 0.5</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Outages:</strong> Outages x Cost x 0.3 x 0.5</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Integration:</strong> Int x (TTFC - 0.25) x Rate</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>API Design:</strong> APIs x Hrs x 0.25 x Rate x 0.5 (Agent: 0.45)</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Cost of Delay:</strong> Impact x Releases x Weeks x 0.50 (Agent: 0.60)</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>FTE Efficiency:</strong> QA x Salary x 65% x 50% (Agent: 80%)</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Test Compression:</strong> Releases x Cycle x 95% x Rate</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Avoided Rework:</strong> Projects x 3 Devs x 3 Months x Rate</div>
     </div>
   </div>
-  <div class="bg-white border border-gray-200 rounded-xl p-6">
-    <h3 class="font-bold text-aiei mb-3">AI Effectiveness Index (AIEI)</h3>
+  <div class="bg-white border border-gray-200 rounded-xl p-5">
+    <h3 class="font-bold text-aiei mb-2">AI Effectiveness (AIEI)</h3>
     <p class="text-sm text-gray-600 mb-3">From <em>API Effectiveness as the Control Plane for AI</em> (Khalsa, Nourian, Crawford, Gray).</p>
-    <div class="bg-aiei-bg rounded-lg p-3 mb-3 text-sm font-mono">AIEI = (wQ x Q) + (wL x L) + (wR x R) + (wC x C_norm)</div>
-    <div class="space-y-2 text-sm text-gray-700">
-      <div class="bg-gray-50 rounded-lg p-3"><strong>Q:</strong> [1 - (Defect_Rate_AI / Defect_Rate_NonAI)] x Test_Pass_Delta x (1 - Rework_Rate_AI)</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>L:</strong> 1 - (Cycle_Time_AI / Cycle_Time_NonAI)</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>R:</strong> (1 - CFR_AI) x SLO_Attainment x Contract_Catch_Rate x Uptime_AI x Adaptability</div>
-      <div class="bg-gray-50 rounded-lg p-3"><strong>C:</strong> (Labor_Saved - Overhead) / (Token + Infra + Tooling); C_norm = min(C_raw / Target_ROI, 1.0)</div>
+    <div class="bg-aiei-bg rounded-lg p-2.5 mb-3 text-sm font-mono">AIEI = (wQ x Q) + (wL x L) + (wR x R) + (wC x C_norm)</div>
+    <div class="space-y-1.5 text-sm text-gray-700">
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Q:</strong> [1-(Defect_AI/Defect_NonAI)] x Test_Pass_Delta x (1-Rework_AI)</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>L:</strong> 1-(Cycle_AI/Cycle_NonAI)</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>R:</strong> (1-CFR_AI) x SLO x Contract_Catch x Uptime x Adaptability</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>C:</strong> (Labor_Saved-Overhead)/(Token+Infra+Tooling); norm=min(raw/Target,1.0)</div>
     </div>
-    <div class="mt-4">
-      <h4 class="font-semibold text-sm mb-2">Weight Profiles</h4>
-      <table class="w-full text-xs">
-        <thead><tr class="text-left text-gray-500"><th class="py-1">Profile</th><th>wQ</th><th>wL</th><th>wR</th><th>wC</th></tr></thead>
-        <tbody class="text-gray-700">
-          <tr><td class="py-1">Quality</td><td>0.35</td><td>0.20</td><td>0.35</td><td>0.10</td></tr>
-          <tr><td class="py-1">Speed</td><td>0.20</td><td>0.35</td><td>0.25</td><td>0.20</td></tr>
-          <tr><td class="py-1">Reliability</td><td>0.25</td><td>0.20</td><td>0.40</td><td>0.15</td></tr>
-          <tr><td class="py-1">Cost</td><td>0.25</td><td>0.25</td><td>0.20</td><td>0.30</td></tr>
-          <tr><td class="py-1">Balanced</td><td>0.25</td><td>0.25</td><td>0.25</td><td>0.25</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <table class="w-full text-xs mt-4"><thead><tr class="text-left text-gray-400"><th class="py-1">Profile</th><th>wQ</th><th>wL</th><th>wR</th><th>wC</th></tr></thead>
+    <tbody class="text-gray-600"><tr><td>Quality</td><td>0.35</td><td>0.20</td><td>0.35</td><td>0.10</td></tr><tr><td>Speed</td><td>0.20</td><td>0.35</td><td>0.25</td><td>0.20</td></tr><tr><td>Reliability</td><td>0.25</td><td>0.20</td><td>0.40</td><td>0.15</td></tr><tr><td>Cost</td><td>0.25</td><td>0.25</td><td>0.20</td><td>0.30</td></tr><tr><td>Balanced</td><td>0.25</td><td>0.25</td><td>0.25</td><td>0.25</td></tr></tbody></table>
   </div>
 </div>
 </div>
+
+<style>.inp{border:1px solid #d1d5db;border-radius:.5rem;padding:.35rem .6rem;font-size:.85rem;outline:none;transition:border-color .15s}.inp:focus{border-color:#FF6C37}.inp.ai:focus{border-color:#7C3AED}</style>
 
 <script>
-const WEIGHTS={quality:{wQ:0.35,wL:0.2,wR:0.35,wC:0.1},speed:{wQ:0.2,wL:0.35,wR:0.25,wC:0.2},reliability:{wQ:0.25,wL:0.2,wR:0.4,wC:0.15},cost:{wQ:0.25,wL:0.25,wR:0.2,wC:0.3},balanced:{wQ:0.25,wL:0.25,wR:0.25,wC:0.25}};
-const SEAT_COST=588;
-let currentWeight='quality',bvaResult=null,aieiResult=null;
+const W={quality:{wQ:.35,wL:.2,wR:.35,wC:.1},speed:{wQ:.2,wL:.35,wR:.25,wC:.2},reliability:{wQ:.25,wL:.2,wR:.4,wC:.15},cost:{wQ:.25,wL:.25,wR:.2,wC:.3},balanced:{wQ:.25,wL:.25,wR:.25,wC:.25}};
+let curW='quality';
+const $=id=>document.getElementById(id),v=id=>+($(id).value),fm=n=>new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(n);
 
-function v(id){return +document.getElementById(id).value}
-function fmt(n){return new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(n)}
+function pickAud(a){document.querySelectorAll('.aud-btn').forEach(e=>{e.classList.remove('border-postman','bg-postman-bg');e.classList.add('border-gray-200','bg-white')});const e=$('aud-'+a);e.classList.remove('border-gray-200','bg-white');e.classList.add('border-postman','bg-postman-bg')}
+function pickOrg(n){[50,200,1000].forEach(s=>{const e=$('org-'+s);if(s===n){e.classList.remove('border-gray-200','bg-white');e.classList.add('border-postman','bg-postman-bg')}else{e.classList.remove('border-postman','bg-postman-bg');e.classList.add('border-gray-200','bg-white')}});$('totalDevs').value=n}
+function pickW(w){curW=w;document.querySelectorAll('.wp-btn').forEach(e=>{e.classList.remove('border-aiei','bg-aiei-bg','text-aiei','font-medium');e.classList.add('border-gray-200','text-gray-500')});const e=$('wp-'+w);e.classList.remove('border-gray-200','text-gray-500');e.classList.add('border-aiei','bg-aiei-bg','text-aiei','font-medium')}
+function tog(id){$('ac-'+id).classList.toggle('collapsed');$('ch-'+id).classList.toggle('rotated')}
+function showTab(t){$('panel-bva').classList.toggle('hidden',t!=='bva');$('panel-aiei').classList.toggle('hidden',t!=='aiei');$('tab-bva').classList.toggle('text-postman',t==='bva');$('tab-bva').classList.toggle('border-postman',t==='bva');$('tab-bva').classList.toggle('font-semibold',t==='bva');$('tab-bva').classList.toggle('text-gray-400',t!=='bva');$('tab-bva').classList.toggle('border-transparent',t!=='bva');$('tab-aiei').classList.toggle('text-aiei',t==='aiei');$('tab-aiei').classList.toggle('border-aiei',t==='aiei');$('tab-aiei').classList.toggle('font-semibold',t==='aiei');$('tab-aiei').classList.toggle('text-gray-400',t!=='aiei');$('tab-aiei').classList.toggle('border-transparent',t!=='aiei')}
+function showPage(p){$('page-calc').classList.toggle('hidden',p!=='calc');$('page-method').classList.toggle('hidden',p!=='method');$('nav-calc').classList.toggle('text-postman',p==='calc');$('nav-calc').classList.toggle('border-postman',p==='calc');$('nav-calc').classList.toggle('font-semibold',p==='calc');$('nav-calc').classList.toggle('text-gray-400',p!=='calc');$('nav-calc').classList.toggle('border-transparent',p!=='calc');$('nav-method').classList.toggle('text-postman',p==='method');$('nav-method').classList.toggle('border-postman',p==='method');$('nav-method').classList.toggle('font-semibold',p==='method');$('nav-method').classList.toggle('text-gray-400',p!=='method');$('nav-method').classList.toggle('border-transparent',p!=='method')}
 
-function setAudience(a){document.querySelectorAll('.audience-card').forEach(el=>{el.classList.remove('border-postman','bg-postman-bg');el.classList.add('border-gray-200','bg-white')});const el=document.getElementById('aud-'+a);el.classList.remove('border-gray-200','bg-white');el.classList.add('border-postman','bg-postman-bg')}
+function calc(){
+  const am=$('agentMode').checked,d=v('totalDevs'),r=v('hourlyRate'),ar=r*1.25;
+  const bva={};
+  bva.productivity=d*(v('hoursLost')*.5)*52*r*(am?1.35:1);
+  bva.governance=v('prsReviewed')*(v('minsPerReview')/60)*ar*.9;
+  bva.shadowAPI=v('undiscoveredApis')*v('incidentCost')*.5;
+  bva.outages=v('outagesYear')*v('costPerOutage')*.3*.5;
+  bva.integration=v('integrationsYear')*Math.max(0,v('ttfcHours')-.25)*r;
+  bva.apiDesign=v('netNewApis')*v('hrsPerApi')*(am?.45:.25)*r*.5;
+  bva.costOfDelay=v('weeklyRevenue')*v('delayedReleases')*v('avgDelayWeeks')*(am?.6:.5);
+  bva.fteEfficiency=v('qaEngineers')*v('qaSalary')*(am?.8:.65)*.5;
+  bva.testCompression=v('annualReleases')*v('regressionCycle')*.95*r;
+  bva.avoidedRework=v('redundantProjects')*3*520*r;
+  const total=Object.values(bva).reduce((a,b)=>a+b,0);
+  const inv=d*588,roi=inv>0?total/inv:0;
 
-function setOrgSize(n){[50,200,1000].forEach(s=>{const el=document.getElementById('org-'+s);if(s===n){el.classList.remove('border-gray-200','bg-white');el.classList.add('border-postman','bg-postman-bg')}else{el.classList.remove('border-postman','bg-postman-bg');el.classList.add('border-gray-200','bg-white')}});document.getElementById('totalDevs').value=n}
-
-function setWeight(w){currentWeight=w;document.querySelectorAll('.weight-btn').forEach(el=>{el.classList.remove('border-aiei','bg-aiei-bg','text-aiei','font-medium');el.classList.add('border-gray-200','text-gray-600')});const el=document.getElementById('wp-'+w);el.classList.remove('border-gray-200','text-gray-600');el.classList.add('border-aiei','bg-aiei-bg','text-aiei','font-medium')}
-
-function toggleAccordion(id){const body=document.getElementById('acc-'+id);const chev=document.getElementById('chev-'+id);body.classList.toggle('collapsed');chev.classList.toggle('rotated')}
-
-function showView(view){document.getElementById('view-calculator').classList.toggle('hidden',view!=='calculator');document.getElementById('view-methodology').classList.toggle('hidden',view!=='methodology');document.getElementById('nav-calc').classList.toggle('tab-active',view==='calculator');document.getElementById('nav-calc').classList.toggle('text-gray-500',view!=='calculator');document.getElementById('nav-method').classList.toggle('tab-active',view==='methodology');document.getElementById('nav-method').classList.toggle('text-gray-500',view!=='methodology')}
-
-function calculate(){
-  const p={totalDevs:v('totalDevs'),hourlyRate:v('hourlyRate'),newHires:v('newHires'),annualReleases:v('annualReleases')};
-  const am=document.getElementById('agentMode').checked;
-  const archRate=p.hourlyRate*1.25;
-  const productivity=p.totalDevs*(v('hoursLost')*0.5)*52*p.hourlyRate*(am?1.35:1);
-  const governance=v('prsReviewed')*(v('minsPerReview')/60)*archRate*0.9;
-  const shadowAPI=v('undiscoveredApis')*v('incidentCost')*0.5;
-  const outages=v('outagesYear')*v('costPerOutage')*0.3*0.5;
-  const integration=v('integrationsYear')*Math.max(0,v('ttfcHours')-0.25)*p.hourlyRate;
-  const apiDesign=v('netNewApis')*v('hrsPerApi')*(am?0.45:0.25)*p.hourlyRate*0.5;
-  const costOfDelay=v('weeklyRevenue')*v('delayedReleases')*v('avgDelayWeeks')*(am?0.6:0.5);
-  const fteEfficiency=v('qaEngineers')*v('qaSalary')*(am?0.8:0.65)*0.5;
-  const testCompression=p.annualReleases*v('regressionCycle')*0.95*p.hourlyRate;
-  const avoidedRework=v('redundantProjects')*3*520*p.hourlyRate;
-  const total=productivity+governance+shadowAPI+outages+integration+apiDesign+costOfDelay+fteEfficiency+testCompression+avoidedRework;
-  const investment=p.totalDevs*SEAT_COST;
-  const roi=investment>0?total/investment:0;
-  bvaResult={total,investment,roi,breakdown:{productivity,governance,shadowAPI,outages,integration,apiDesign,costOfDelay,fteEfficiency,testCompression,avoidedRework}};
-
-  const w=WEIGHTS[currentWeight];
-  const dc=v('defectRateNonAI')>0?Math.max(0,1-v('defectRateAI')/v('defectRateNonAI')):0.5;
+  const w=W[curW];
+  const dc=v('defectRateNonAI')>0?Math.max(0,1-v('defectRateAI')/v('defectRateNonAI')):.5;
   const Q=Math.min(1,Math.max(0,dc*v('testPassDelta')*(1-v('reworkRateAI'))));
-  const L_raw=v('cycleTimeNonAI')>0?1-v('cycleTimeAI')/v('cycleTimeNonAI'):0;
-  const L=Math.max(0,Math.min(1,L_raw));
+  const L=Math.max(0,Math.min(1,v('cycleTimeNonAI')>0?1-v('cycleTimeAI')/v('cycleTimeNonAI'):0));
   const R=Math.min(1,Math.max(0,(1-v('cfrAI'))*v('sloAttainment')*v('contractCatch')*v('uptimeAI')*v('adaptability')));
-  const totalCost=v('tokenCost')+v('infraCost')+v('toolingCost')||1;
-  const C_raw=(v('laborSaved')-v('overheadValue'))/totalCost;
-  const C=Math.min(1,Math.max(0,C_raw/v('targetROI')));
-  const AIEI=w.wQ*Q+w.wL*L+w.wR*R+w.wC*C;
-  const cls=AIEI>=0.7?'Effective':AIEI>=0.4?'Mixed':'Technical Debt';
-  aieiResult={AIEI,Q,L,R,C,classification:cls};
+  const tc=v('tokenCost')+v('infraCost')+v('toolingCost')||1;
+  const C=Math.min(1,Math.max(0,(v('laborSaved')-v('overheadValue'))/tc/v('targetROI')));
+  const aiei=w.wQ*Q+w.wL*L+w.wR*R+w.wC*C;
+  const cls=aiei>=.7?'Effective':aiei>=.4?'Mixed':'Technical Debt';
 
-  document.getElementById('heroValue').textContent='$'+fmt(total);
-  document.getElementById('heroAIEI').textContent=AIEI.toFixed(2);
-  document.getElementById('stratOutcomes').innerHTML='<div>Postman drives <strong class="text-postman">$'+fmt(total)+'</strong> in annual efficiency gains</div><div>AI effectiveness: <strong class="text-aiei">'+AIEI.toFixed(2)+'</strong> ('+cls+')</div>';
-  const topItems=Object.entries(bvaResult.breakdown).sort((a,b)=>b[1]-a[1]).slice(0,3);
-  document.getElementById('opImpact').innerHTML=topItems.map(([k,val])=>'<div class="flex justify-between"><span class="text-gray-600">'+k.replace(/([A-Z])/g,' $1').trim()+'</span><span class="font-medium">$'+fmt(val)+'</span></div>').join('');
-  document.getElementById('roiInvest').textContent='$'+fmt(investment);
-  document.getElementById('roiValue').textContent='$'+fmt(total);
-  document.getElementById('roiX').textContent=roi.toFixed(1)+'x';
-  document.getElementById('aieiScore').textContent=AIEI.toFixed(2);
-  const clsEl=document.getElementById('aieiClass');
-  clsEl.textContent=cls;
-  clsEl.className='text-sm px-3 py-1 rounded-full '+(cls==='Effective'?'bg-green-100 text-green-700':cls==='Mixed'?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700');
-  document.getElementById('qVal').textContent=Q.toFixed(2);
-  document.getElementById('lVal').textContent=L.toFixed(2);
-  document.getElementById('rVal').textContent=R.toFixed(2);
-  document.getElementById('cVal').textContent=C.toFixed(2);
+  $('heroVal').textContent='$'+fm(total);
+  $('stratOut').innerHTML='<div>Postman drives <strong class="text-postman">$'+fm(total)+'</strong> annually</div><div>AI effectiveness: <strong class="text-aiei">'+aiei.toFixed(2)+'</strong> ('+cls+')</div>';
+  const top3=Object.entries(bva).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  $('topDrivers').innerHTML=top3.map(([k,val])=>'<div class="flex justify-between text-sm"><span class="text-gray-600">'+k.replace(/([A-Z])/g,' $1').trim()+'</span><span class="font-medium">$'+fm(val)+'</span></div>').join('');
+  $('roiI').textContent='$'+fm(inv);$('roiV').textContent='$'+fm(total);$('roiX').textContent=roi.toFixed(1)+'x';
+  $('aieiScore').textContent=aiei.toFixed(2);
+  const ce=$('aieiCls');ce.textContent=cls;ce.className='text-[11px] px-2.5 py-0.5 rounded-full '+(cls==='Effective'?'bg-green-100 text-green-700':cls==='Mixed'?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700');
+  $('qV').textContent=Q.toFixed(2);$('lV').textContent=L.toFixed(2);$('rV').textContent=R.toFixed(2);$('cV').textContent=C.toFixed(2);
+
+  window._bva={total,inv,roi};window._aiei={aiei,Q,L,R,C,cls};
 }
 
-function getSummaryText(){let s='EXECUTIVE VALUE SUMMARY\n\n';if(bvaResult)s+='Postman Value: $'+fmt(bvaResult.total)+' annual efficiency gains. ROI: '+bvaResult.roi.toFixed(1)+'x.\n\n';if(aieiResult)s+='AI Effectiveness: '+aieiResult.AIEI.toFixed(2)+' ('+aieiResult.classification+'). Q: '+aieiResult.Q.toFixed(2)+', L: '+aieiResult.L.toFixed(2)+', R: '+aieiResult.R.toFixed(2)+', C: '+aieiResult.C.toFixed(2)+'.\n\n';s+='This is an estimate. For measured results, run the AIEI Tool in Postman with 19+ connectors.';return s}
-function copyOutput(){navigator.clipboard.writeText(getSummaryText()).then(()=>{const b=document.getElementById('copyBtn');b.textContent='Copied!';setTimeout(()=>{b.textContent='Copy Output'},2000)})}
-function exportPDF(){window.print()}
+function xCopy(){const b=window._bva||{},a=window._aiei||{};let s='EXECUTIVE VALUE SUMMARY\n\nPostman Value: $'+fm(b.total||0)+' annual gains. ROI: '+(b.roi||0).toFixed(1)+'x.\nAIEI: '+(a.aiei||0).toFixed(2)+' ('+(a.cls||'-')+') Q:'+(a.Q||0).toFixed(2)+' L:'+(a.L||0).toFixed(2)+' R:'+(a.R||0).toFixed(2)+' C:'+(a.C||0).toFixed(2)+'\n\nEstimate. Run AIEI Tool for measured results.';navigator.clipboard.writeText(s).then(()=>{const b=$('copyBtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000)})}
+function xPDF(){window.print()}
 </script>
 </body>
 </html>

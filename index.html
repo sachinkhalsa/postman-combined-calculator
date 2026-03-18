@@ -222,6 +222,10 @@ body{font-family:'Inter',sans-serif}
         <div class="text-center p-1.5 bg-white rounded-lg"><div class="text-[10px] text-gray-400">C</div><div class="font-bold text-xs" id="cV">-</div></div>
       </div>
     </div>
+    <!-- AIEI Interpretation -->
+    <div id="aieiInterp" class="bg-white border border-gray-200 rounded-xl p-3 text-xs text-gray-500 hidden">
+      <div id="aieiInterpText"></div>
+    </div>
     <!-- Connectors -->
     <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-[11px] text-gray-400">
       <p class="text-gray-600 font-medium mb-1">Estimate mode. For real data, run the AIEI Tool in Postman (19+ connectors).</p>
@@ -271,6 +275,30 @@ body{font-family:'Inter',sans-serif}
     </div>
     <table class="w-full text-xs mt-4"><thead><tr class="text-left text-gray-400"><th class="py-1">Profile</th><th>wQ</th><th>wL</th><th>wR</th><th>wC</th></tr></thead>
     <tbody class="text-gray-600"><tr><td>Quality</td><td>0.35</td><td>0.20</td><td>0.35</td><td>0.10</td></tr><tr><td>Speed</td><td>0.20</td><td>0.35</td><td>0.25</td><td>0.20</td></tr><tr><td>Reliability</td><td>0.25</td><td>0.20</td><td>0.40</td><td>0.15</td></tr><tr><td>Cost</td><td>0.25</td><td>0.25</td><td>0.20</td><td>0.30</td></tr><tr><td>Balanced</td><td>0.25</td><td>0.25</td><td>0.25</td><td>0.25</td></tr></tbody></table>
+
+    <h4 class="font-semibold text-sm mt-5 mb-2">What AIEI Scores Mean</h4>
+    <div class="space-y-2 text-sm">
+      <div class="border-l-4 border-green-500 bg-green-50 rounded-r-lg p-3">
+        <div class="font-semibold text-green-800">0.70 - 1.00: Effective</div>
+        <div class="text-green-700 text-xs mt-1">AI is measurably improving outcomes. Quality, speed, reliability, and cost are all contributing positively. Safe to expand AI adoption. Present results to the board with confidence. Focus shifts to optimization and scaling.</div>
+      </div>
+      <div class="border-l-4 border-yellow-500 bg-yellow-50 rounded-r-lg p-3">
+        <div class="font-semibold text-yellow-800">0.40 - 0.69: Mixed</div>
+        <div class="text-yellow-700 text-xs mt-1">AI is producing some value but specific dimensions need attention. Common pattern: speed improves while quality or reliability degrades. Look at the weakest dimension score - that is where the system is leaking. Do not expand AI to new teams until the weakest dimension is addressed. This is where most enterprises land today.</div>
+      </div>
+      <div class="border-l-4 border-red-500 bg-red-50 rounded-r-lg p-3">
+        <div class="font-semibold text-red-800">0.00 - 0.39: Technical Debt</div>
+        <div class="text-red-700 text-xs mt-1">AI is not yet effective as a system. The trust-but-verify tax likely exceeds the speed gains. Pause AI expansion. Invest in measurement infrastructure, governance automation, and contract testing before scaling further. This does not mean AI is bad - it means the surrounding system is not ready.</div>
+      </div>
+    </div>
+
+    <h4 class="font-semibold text-sm mt-5 mb-2">What Each Dimension Tells You</h4>
+    <div class="space-y-1.5 text-sm text-gray-700">
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Q (Quality):</strong> Is AI-generated work production-grade? Multiplies defect improvement, test pass rates, and rework rates. If any factor collapses (e.g. 40% rework rate), Q collapses. Below 0.5 = AI is creating technical debt faster than value.</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>L (Lead Time):</strong> Is AI actually faster end-to-end? Measures cycle time delta between AI-assisted and non-AI work. L = 0.40 means 40% faster. L negative means AI is slower (review overhead exceeding generation speed). Watch for L improving while system throughput declines.</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>R (Reliability):</strong> Is the system stable under AI acceleration? Product of five factors - if any one collapses, R collapses. R trending down while L trends up = velocity buying fragility. Postman can measure ~70% of R natively today (SLOs, contract catch, uptime).</div>
+      <div class="bg-gray-50 rounded-lg p-2.5"><strong>C (Cost Efficiency):</strong> Is AI worth what it costs, all-in? Includes the trust-but-verify tax (senior engineers reviewing AI output) that most organizations ignore. C < 1.0 raw means AI costs more than it saves. TCO typically exceeds expectations by 40-60%.</div>
+    </div>
   </div>
 </div>
 </div>
@@ -323,6 +351,14 @@ function calc(){
   $('aieiScore').textContent=aiei.toFixed(2);
   const ce=$('aieiCls');ce.textContent=cls;ce.className='text-[11px] px-2.5 py-0.5 rounded-full '+(cls==='Effective'?'bg-green-100 text-green-700':cls==='Mixed'?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700');
   $('qV').textContent=Q.toFixed(2);$('lV').textContent=L.toFixed(2);$('rV').textContent=R.toFixed(2);$('cV').textContent=C.toFixed(2);
+
+  const ip=$('aieiInterp'),it=$('aieiInterpText');ip.classList.remove('hidden');
+  const dims=[{n:'Quality',v:Q},{n:'Lead Time',v:L},{n:'Reliability',v:R},{n:'Cost',v:C}];
+  const weakest=dims.reduce((a,b)=>b.v<a.v?b:a);
+  const strongest=dims.reduce((a,b)=>b.v>a.v?b:a);
+  if(cls==='Effective'){ip.className='bg-green-50 border border-green-200 rounded-xl p-3 text-xs text-green-800';it.innerHTML='<strong>Effective.</strong> AI is measurably improving outcomes across all dimensions. Strongest: '+strongest.n+' ('+strongest.v.toFixed(2)+'). Safe to expand AI adoption. Present to leadership with measured data.'}
+  else if(cls==='Mixed'){ip.className='bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-xs text-yellow-800';it.innerHTML='<strong>Mixed results.</strong> Weakest dimension: <strong>'+weakest.n+'</strong> ('+weakest.v.toFixed(2)+'). Address '+weakest.n.toLowerCase()+' before expanding AI to new teams. Run the full AIEI Tool to pinpoint root causes.'}
+  else{ip.className='bg-red-50 border border-red-200 rounded-xl p-3 text-xs text-red-800';it.innerHTML='<strong>Technical Debt risk.</strong> Weakest dimension: <strong>'+weakest.n+'</strong> ('+weakest.v.toFixed(2)+'). Pause AI expansion. Invest in measurement infrastructure and governance before scaling. The trust-but-verify tax likely exceeds the speed gains.'}
 
   window._bva={total,inv,roi};window._aiei={aiei,Q,L,R,C,cls};
 }

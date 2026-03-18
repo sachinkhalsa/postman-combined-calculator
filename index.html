@@ -338,61 +338,287 @@ body{font-family:'Inter',sans-serif}
 
 <!-- METHODOLOGY PAGE -->
 <div id="page-method" class="hidden">
-<div class="max-w-3xl mx-auto px-6 py-8">
-  <h2 class="text-xl font-bold mb-4">Methodology</h2>
-  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-4">
-    <h3 class="font-bold text-postman mb-2">Postman Value (BVA)</h3>
-    <p class="text-sm text-gray-600 mb-3">Based on Forrester TEI, customer benchmarks, Postman State of API. See <a href="https://philipkang-io.github.io/bva/" target="_blank" class="text-postman hover:underline">Phil's BVA Calculator</a> for full methodology.</p>
-    <div class="space-y-1.5 text-sm text-gray-700">
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Productivity:</strong> Devs x (Saved x 0.5) x 52 x Rate (Agent: x1.35)</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Governance:</strong> PRs x Mins/60 x ArchRate x 0.9</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Shadow API:</strong> Undiscovered x Cost x 0.5</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Outages:</strong> Outages x Cost x 0.3 x 0.5</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Integration:</strong> Int x (TTFC - 0.25) x Rate</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>API Design:</strong> APIs x Hrs x 0.25 x Rate x 0.5 (Agent: 0.45)</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Cost of Delay:</strong> Impact x Releases x Weeks x 0.50 (Agent: 0.60)</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>FTE Efficiency:</strong> QA x Salary x 65% x 50% (Agent: 80%)</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Test Compression:</strong> Releases x Cycle x 95% x Rate</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Avoided Rework:</strong> Projects x 3 Devs x 3 Months x Rate</div>
+<div class="max-w-4xl mx-auto px-6 py-8">
+  <h2 class="text-xl font-bold mb-1">Complete ROI Framework, Logic, and Formulas</h2>
+  <p class="text-sm text-gray-500 mb-5">A detailed breakdown of the formulas and logic driving the Business Value Assessment and AI Effectiveness Index.</p>
+
+  <!-- Tab toggle -->
+  <div class="flex border-b border-gray-200 mb-6">
+    <button onclick="showMethodTab('bva')" id="mtab-bva" class="px-5 py-2.5 text-sm font-semibold text-postman border-b-2 border-postman">Postman Value (BVA)</button>
+    <button onclick="showMethodTab('aiei')" id="mtab-aiei" class="px-5 py-2.5 text-sm text-gray-400 border-b-2 border-transparent hover:text-gray-600">AI Effectiveness (AIEI)</button>
+  </div>
+
+  <!-- ==================== BVA METHODOLOGY ==================== -->
+  <div id="mpanel-bva">
+
+  <!-- Global Baseline -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-gray-900 mb-3">Global Baseline Parameters</h3>
+    <table class="w-full text-sm">
+      <thead><tr class="text-left text-gray-400 text-xs uppercase"><th class="py-2">Parameter</th><th>Default</th><th>Logic Mapping</th></tr></thead>
+      <tbody class="text-gray-700">
+        <tr class="border-t border-gray-100"><td class="py-2">Total Developers</td><td>50</td><td>Scales all productivity metrics</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">Avg Hourly Cost</td><td>$80</td><td>Blended rate for labor value</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">New Hires / Year</td><td>10</td><td>Drives onboarding math</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">Annual Releases</td><td>24</td><td>Frequency of QA regression</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">Seat Cost</td><td>$588</td><td>Platform license overhead ($49/mo)</td></tr>
+      </tbody>
+    </table>
+    <p class="text-xs text-gray-400 mt-3">These constants represent the economic engine of the calculator. Any change propagates across all formulas to ensure a consistent, auditable financial model.</p>
+  </div>
+
+  <!-- Platform Engineering Savings -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-postman mb-4">Platform Engineering Savings</h3>
+    <div class="space-y-4">
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm mb-1">Productivity</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Standard: Devs x (Hours_Saved x 0.5) x 52 x Rate<br>Agent Mode: Standard x 1.35 Multiplier</div>
+        <p class="text-xs text-gray-500">Lost time recovery in setup and debugging. 50% capture rate ensures savings are grounded in reality - not all saved time is reinvested in coding.</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm mb-1">Governance Automation</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">PRs x (Mins / 60) x ArchitectRate x 0.90</div>
+        <p class="text-xs text-gray-500">Automating API linting and styling via Spectral rules. 90% automation savings. Architect multiplier (1.25x base rate) reflects that governance reviews are performed by senior personnel.</p>
+      </div>
+      <div class="bg-postman-bg rounded-lg p-4 border border-postman/20">
+        <div class="font-semibold text-sm mb-1">Shadow API Discovery <span class="text-[10px] text-postman bg-postman/10 px-1.5 py-0.5 rounded-full ml-1">Agent Mode</span></div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Undiscovered_APIs x Incident_Cost x 0.50</div>
+        <p class="text-xs text-gray-500">Assumes 50% mitigation of ungoverned risks via Agent discovery. 34% of developers cannot find existing APIs (Postman State of API 2025).</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm mb-1">Outage & Reliability Savings</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Outages x Cost_per_Outage x 0.30 x 0.50</div>
+        <p class="text-xs text-gray-500">30% reduction in outages (Forrester benchmark for Year 1 reliability gains). 50% attribution factor to Postman's specific role in this outcome.</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm mb-1">Integration Velocity</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Integrations x (TTFC_hours - 0.25) x Rate</div>
+        <p class="text-xs text-gray-500">Target TTFC reduced to 15 minutes (0.25 hours). In legacy systems, this often takes 4+ hours of discovery and access requests.</p>
+      </div>
     </div>
   </div>
-  <div class="bg-white border border-gray-200 rounded-xl p-5">
-    <h3 class="font-bold text-aiei mb-2">AI Effectiveness (AIEI)</h3>
-    <p class="text-sm text-gray-600 mb-3">From <em>API Effectiveness as the Control Plane for AI</em> (Khalsa, Nourian, Crawford, Gray).</p>
-    <div class="bg-aiei-bg rounded-lg p-2.5 mb-3 text-sm font-mono">AIEI = (wQ x Q) + (wL x L) + (wR x R) + (wC x C_norm)</div>
-    <div class="space-y-1.5 text-sm text-gray-700">
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Q:</strong> [1-(Defect_AI/Defect_NonAI)] x Test_Pass_Delta x (1-Rework_AI)</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>L:</strong> 1-(Cycle_AI/Cycle_NonAI)</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>R:</strong> (1-CFR_AI) x SLO x Contract_Catch x Uptime x Adaptability</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>C:</strong> (Labor_Saved-Overhead)/(Token+Infra+Tooling); norm=min(raw/Target,1.0)</div>
-    </div>
-    <table class="w-full text-xs mt-4"><thead><tr class="text-left text-gray-400"><th class="py-1">Profile</th><th>wQ</th><th>wL</th><th>wR</th><th>wC</th></tr></thead>
-    <tbody class="text-gray-600"><tr><td>Quality</td><td>0.35</td><td>0.20</td><td>0.35</td><td>0.10</td></tr><tr><td>Speed</td><td>0.20</td><td>0.35</td><td>0.25</td><td>0.20</td></tr><tr><td>Reliability</td><td>0.25</td><td>0.20</td><td>0.40</td><td>0.15</td></tr><tr><td>Cost</td><td>0.25</td><td>0.25</td><td>0.20</td><td>0.30</td></tr><tr><td>Balanced</td><td>0.25</td><td>0.25</td><td>0.25</td><td>0.25</td></tr></tbody></table>
 
-    <h4 class="font-semibold text-sm mt-5 mb-2">What AIEI Scores Mean</h4>
-    <div class="space-y-2 text-sm">
-      <div class="border-l-4 border-green-500 bg-green-50 rounded-r-lg p-3">
+  <!-- Product Engineering Savings -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-postman mb-4">Product Engineering Savings</h3>
+    <div class="space-y-4">
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm mb-1">API Design Acceleration</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Standard: APIs x Hrs x 0.25 x Rate x 0.50<br>Agent Mode: Cycle reduction shifts to 45%</div>
+        <p class="text-xs text-gray-500">25% cycle time reduction (Forrester) specifically for Design and Testing phases. Standardized templates reduce design cycles.</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm mb-1">Cost of Delay (Revenue Impact)</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Standard: Revenue_Impact x Delayed_Releases x Avg_Weeks x 0.50<br>Agent Mode: Acceleration shifts to 60%</div>
+        <p class="text-xs text-gray-500">CFO-level metric. 43% of API-first organizations generate 25%+ of total revenue from APIs (SmartBear). We assume Postman's accelerated delivery reduces delays by 50%.</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm mb-1">Avoided Rework</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Redundant_Projects x 3_Devs x 520_hrs x Rate</div>
+        <p class="text-xs text-gray-500">Discovery via Private API Network prevents redundant 3-month project cycles. 3 devs x 10 hrs/week x 52 weeks = 520 hours per project.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QE / COE Savings -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-postman mb-4">Head of QE (COE) Savings</h3>
+    <div class="space-y-4">
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm mb-1">QA FTE Efficiency</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Standard: QA_Engineers x Salary x 0.65 x 0.50<br>Agent Mode: Efficiency shifts to 80%</div>
+        <p class="text-xs text-gray-500">Shifting labor from manual to automated API testing. 65% efficiency gain via automation (Forrester). 50% attribution to Postman.</p>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm mb-1">Test Compression</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Releases x Regression_Cycle_Hrs x 0.95 x Rate</div>
+        <p class="text-xs text-gray-500">95% reduction in regression time via automated collection runners. Compressing manual regression days into minutes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent Mode Logic -->
+  <div class="bg-agent-bg border border-agent/20 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-agent mb-3">Agent Mode (V12+) Specific Logic</h3>
+    <div class="space-y-2 text-sm text-gray-700">
+      <div class="flex gap-3"><span class="text-agent font-bold">1.35x</span><span><strong>Productivity Boost:</strong> Agent Mode applies a 1.35x multiplier to the standard efficiency capture rate.</span></div>
+      <div class="flex gap-3"><span class="text-agent font-bold">45%</span><span><strong>API Design:</strong> Cycle reduction shifts from 25% to 45% with AI-assisted spec authoring.</span></div>
+      <div class="flex gap-3"><span class="text-agent font-bold">60%</span><span><strong>Cost of Delay:</strong> AI accelerates delivery by an additional margin, moving attribution from 50% to 60%.</span></div>
+      <div class="flex gap-3"><span class="text-agent font-bold">80%</span><span><strong>QA FTE:</strong> Efficiency shifts from 65% to 80% with AI test generation.</span></div>
+      <div class="flex gap-3"><span class="text-agent font-bold">50%</span><span><strong>Shadow API Discovery:</strong> Mitigates 50% of the cost of ungoverned APIs causing incidents.</span></div>
+    </div>
+  </div>
+
+  <!-- Assumptions -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-gray-900 mb-3">Key Assumptions & Logic</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Hourly Rate ($80):</strong> Blended rate includes benefits and overhead for a full-stack engineer.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Capture Rate (50%):</strong> Applied to productivity to ensure savings are grounded - not all saved time becomes coding time.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Architect Multiplier (1.25x):</strong> Governance reviews are performed by senior personnel; base rate is scaled accordingly.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Automation (90%):</strong> Spectral linting eliminates manual "eyeball" reviews for standard PRs.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>TTFC Target (15 min):</strong> The 0.25 constant represents a 15-minute target Time-to-First-Call.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Outage Attribution (50%):</strong> 30% outage reduction (Forrester) with 50% attribution to Postman's specific role.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Test Compression (95%):</strong> Automated collection runners compress manual regression days into minutes.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>QA Efficiency (65%):</strong> Shifting manual effort to automated test suites allows significant headcount reinvestment.</div>
+    </div>
+  </div>
+
+  <!-- Sources -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5">
+    <h3 class="font-bold text-sm text-gray-900 mb-3">Sources & References</h3>
+    <table class="w-full text-xs">
+      <thead><tr class="text-left text-gray-400 uppercase"><th class="py-2">Source</th><th>Used In</th><th>Key Data Point</th></tr></thead>
+      <tbody class="text-gray-600">
+        <tr class="border-t border-gray-100"><td class="py-2">Forrester TEI for Postman</td><td>Productivity, API Design, Governance, QA FTE, Test Compression, Outages</td><td>Standardized templates reduce design cycles; Spectral linting automates governance; automated runners compress regression</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">Customer Benchmarks</td><td>Productivity, Integration</td><td>Integrated collections enable first API call on Day 1; legacy TTFC averages 4+ hours</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">Postman State of API 2025</td><td>Shadow API Discovery</td><td>34% of developers cannot find existing APIs; only 17% of teams adopt contract testing</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">SmartBear State of API</td><td>Cost of Delay</td><td>43% of API-first orgs generate 25%+ of revenue from APIs</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">IBM Cost of Data Breach 2024</td><td>Risk Mitigation</td><td>Average data breach cost is $4.45M globally</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">Postman ROI Blueprint</td><td>Avoided Rework</td><td>Private API Network prevents duplicate builds across teams</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  </div>
+
+  <!-- ==================== AIEI METHODOLOGY ==================== -->
+  <div id="mpanel-aiei" class="hidden">
+
+  <!-- Composite Formula -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-aiei mb-3">The Composite Score</h3>
+    <p class="text-sm text-gray-600 mb-3">From <em>API Effectiveness as the Control Plane for AI</em> (Khalsa, Nourian, Crawford, Gray).</p>
+    <div class="bg-aiei-bg rounded-lg p-3 mb-3 font-mono text-sm text-aiei font-semibold text-center">AIEI = (wQ x Q) + (wL x L) + (wR x R) + (wC x C_norm)</div>
+    <div class="text-sm text-gray-600 space-y-2">
+      <p>Four orthogonal outcome dimensions, each bounded 0-1. The composite is a weighted sum, not a product - so one weak dimension drags the score but does not zero it out. The weights are configurable by organizational priority.</p>
+      <p><strong>Design decisions:</strong> Multiplicative where failures cascade (R-Score). Comparative, not absolute (L-Score). Bounded 0-1 for composability. Deterministic and auditable - same inputs, same outputs, every time.</p>
+    </div>
+  </div>
+
+  <!-- Dimension Formulas -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-aiei mb-4">Dimension Formulas</h3>
+    <div class="space-y-5">
+
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm text-aiei mb-1">Q: Quality</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">Q = [1 - (Defect_Rate_AI / Defect_Rate_NonAI)] x Test_Pass_Delta x (1 - Rework_Rate_AI)</div>
+        <p class="text-xs text-gray-500">Is AI-generated work production-grade? Multiplies three factors: defect improvement ratio, test pass rate delta, and rework avoidance. If any factor collapses (e.g. 40% rework rate), Q collapses. Below 0.5 means AI is creating technical debt faster than value.</p>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm text-aiei mb-1">L: Lead Time</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">L = 1 - (Cycle_Time_AI / Cycle_Time_NonAI)</div>
+        <p class="text-xs text-gray-500">Is AI actually faster end-to-end? Comparative, not absolute - measures cycle time delta between AI-assisted and non-AI work. L = 0.40 means 40% faster. L negative (not possible in calculator, but in real data) means AI is slower due to review overhead exceeding generation speed.</p>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm text-aiei mb-1">R: Reliability</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">R = (1 - CFR_AI) x SLO_Attainment x Contract_Catch_Rate x Uptime_AI x Adaptability</div>
+        <p class="text-xs text-gray-500">Is the system stable under AI acceleration? Product of five factors - if any one goes to zero, R goes to zero. This is how reliability actually works: one broken link breaks the chain. Postman can measure ~70% of R natively today (SLOs via Monitors, contract catch via CLI, uptime via API monitoring). R trending down while L trends up = velocity buying fragility.</p>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="font-semibold text-sm text-aiei mb-1">C: Cost Efficiency</div>
+        <div class="font-mono text-xs text-gray-600 bg-white rounded p-2 mb-2">C_raw = (Labor_Value_Saved - Overhead_Value) / (Token_Cost + Infra_Cost + Tooling_Cost)<br>C_norm = min(C_raw / Target_ROI, 1.0)</div>
+        <p class="text-xs text-gray-500">Is AI worth what it costs, all-in? Includes the trust-but-verify tax (senior engineers reviewing AI output) that most organizations ignore. C_raw < 1.0 means AI costs more than it saves. Normalized against a target ROI to bound between 0 and 1. TCO typically exceeds expectations by 40-60%.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Weight Profiles -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-aiei mb-3">Weight Profiles</h3>
+    <p class="text-sm text-gray-500 mb-3">The right conversation with a CIO is not "here are the weights." It is: "What matters most to you? That determines how we score."</p>
+    <table class="w-full text-sm">
+      <thead><tr class="text-left text-gray-400 text-xs uppercase"><th class="py-2">Profile</th><th>wQ</th><th>wL</th><th>wR</th><th>wC</th><th>Best For</th></tr></thead>
+      <tbody class="text-gray-700">
+        <tr class="border-t border-gray-100"><td class="py-2 font-medium">Quality-First</td><td>0.35</td><td>0.20</td><td>0.35</td><td>0.10</td><td class="text-xs text-gray-500">Regulated industries (FSI, healthcare), CISOs</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2 font-medium">Speed-First</td><td>0.20</td><td>0.35</td><td>0.25</td><td>0.20</td><td class="text-xs text-gray-500">Product engineering, CTOs focused on TTM</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2 font-medium">Reliability-First</td><td>0.25</td><td>0.20</td><td>0.40</td><td>0.15</td><td class="text-xs text-gray-500">Platform engineering, SRE leaders</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2 font-medium">Cost-First</td><td>0.25</td><td>0.25</td><td>0.20</td><td>0.30</td><td class="text-xs text-gray-500">CFOs, budget reviews, efficiency mandates</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2 font-medium">Balanced</td><td>0.25</td><td>0.25</td><td>0.25</td><td>0.25</td><td class="text-xs text-gray-500">Executive overview, board presentations</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Score Interpretation -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-aiei mb-3">What AIEI Scores Mean</h3>
+    <div class="space-y-3">
+      <div class="border-l-4 border-green-500 bg-green-50 rounded-r-lg p-4">
         <div class="font-semibold text-green-800">0.70 - 1.00: Effective</div>
         <div class="text-green-700 text-xs mt-1">AI is measurably improving outcomes. Quality, speed, reliability, and cost are all contributing positively. Safe to expand AI adoption. Present results to the board with confidence. Focus shifts to optimization and scaling.</div>
       </div>
-      <div class="border-l-4 border-yellow-500 bg-yellow-50 rounded-r-lg p-3">
+      <div class="border-l-4 border-yellow-500 bg-yellow-50 rounded-r-lg p-4">
         <div class="font-semibold text-yellow-800">0.40 - 0.69: Mixed</div>
         <div class="text-yellow-700 text-xs mt-1">AI is producing some value but specific dimensions need attention. Common pattern: speed improves while quality or reliability degrades. Look at the weakest dimension score - that is where the system is leaking. Do not expand AI to new teams until the weakest dimension is addressed. This is where most enterprises land today.</div>
       </div>
-      <div class="border-l-4 border-red-500 bg-red-50 rounded-r-lg p-3">
+      <div class="border-l-4 border-red-500 bg-red-50 rounded-r-lg p-4">
         <div class="font-semibold text-red-800">0.00 - 0.39: Technical Debt</div>
         <div class="text-red-700 text-xs mt-1">AI is not yet effective as a system. The trust-but-verify tax likely exceeds the speed gains. Pause AI expansion. Invest in measurement infrastructure, governance automation, and contract testing before scaling further. This does not mean AI is bad - it means the surrounding system is not ready.</div>
       </div>
     </div>
+  </div>
 
-    <h4 class="font-semibold text-sm mt-5 mb-2">What Each Dimension Tells You</h4>
-    <div class="space-y-1.5 text-sm text-gray-700">
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>Q (Quality):</strong> Is AI-generated work production-grade? Multiplies defect improvement, test pass rates, and rework rates. If any factor collapses (e.g. 40% rework rate), Q collapses. Below 0.5 = AI is creating technical debt faster than value.</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>L (Lead Time):</strong> Is AI actually faster end-to-end? Measures cycle time delta between AI-assisted and non-AI work. L = 0.40 means 40% faster. L negative means AI is slower (review overhead exceeding generation speed). Watch for L improving while system throughput declines.</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>R (Reliability):</strong> Is the system stable under AI acceleration? Product of five factors - if any one collapses, R collapses. R trending down while L trends up = velocity buying fragility. Postman can measure ~70% of R natively today (SLOs, contract catch, uptime).</div>
-      <div class="bg-gray-50 rounded-lg p-2.5"><strong>C (Cost Efficiency):</strong> Is AI worth what it costs, all-in? Includes the trust-but-verify tax (senior engineers reviewing AI output) that most organizations ignore. C < 1.0 raw means AI costs more than it saves. TCO typically exceeds expectations by 40-60%.</div>
+  <!-- Per-Dimension Interpretation -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-aiei mb-3">Dimension Interpretation Guide</h3>
+    <div class="space-y-3 text-sm">
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Q (Quality):</strong> 0.70+ = production-grade, low rework. 0.40-0.69 = mixed, rework or test gaps. Below 0.40 = creating debt faster than value. Contract testing is the fix.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>L (Lead Time):</strong> 0.50+ = 50%+ faster end-to-end. 0.25-0.49 = moderate, review overhead limiting gains. Below 0.25 = review tax eating generation gains.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>R (Reliability):</strong> 0.70+ = system absorbing velocity safely. 0.40-0.69 = at least one weak factor dragging. Below 0.40 = fragile under AI velocity, pause expansion.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>C (Cost Efficiency):</strong> 0.70+ = strong ROI including verify tax. 0.40-0.69 = returns exist but overhead consuming value. Below 0.40 = net cost, deployment model needs to change.</div>
     </div>
   </div>
+
+  <!-- Measurement Maturity -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-aiei mb-3">Measurement Maturity Model</h3>
+    <p class="text-sm text-gray-500 mb-3">Not a rollout plan. A model of rigor. The only thing that changes is what you can credibly claim.</p>
+    <div class="space-y-2">
+      <div class="bg-gray-50 rounded-lg p-3 text-sm"><strong class="text-gray-400">Level 0:</strong> Anecdotes and usage counts. Sentiment only. This is where 77% of enterprises sit today.</div>
+      <div class="bg-gray-50 rounded-lg p-3 text-sm"><strong class="text-aiei/70">Level 1:</strong> Attribution plus minimum scorecard. Lead time, defects, CFR, MTTR, token cost per valid artifact, trust-but-verify tax. First board-level conversation.</div>
+      <div class="bg-gray-50 rounded-lg p-3 text-sm"><strong class="text-aiei/80">Level 2:</strong> Joins plus criticality weighting. Change-to-deploy-to-incident joins, API catalog weighting. AI impact on change safety for critical systems, not just averages.</div>
+      <div class="bg-gray-50 rounded-lg p-3 text-sm"><strong class="text-aiei/90">Level 3:</strong> Guardrails plus unit economics. Overrides, hallucination incidents, policy exceptions, cost-to-serve proxies. This is where the MIT 95% failure rate reverses.</div>
+      <div class="bg-aiei-bg rounded-lg p-3 text-sm border border-aiei/20"><strong class="text-aiei">Level 4:</strong> Interface pipeline measurement. SDK release lag, adoption, parity, drift, integration time deltas. Safe consumption at scale for humans and agents.</div>
+    </div>
+  </div>
+
+  <!-- Measurement Contract -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5 mb-5">
+    <h3 class="font-bold text-sm text-aiei mb-3">The Measurement Contract (Non-Negotiables)</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Attribution:</strong> AI-assisted vs non-AI tagging. Without attribution, deltas are stories, not evidence.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Baseline / Control:</strong> Deltas without baselines are meaningless. Need a comparison cohort.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Criticality Weighting:</strong> What matters most counts more. Not all APIs are equal.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Validity:</strong> Decided by real validation, not generation. Passing tests, not producing code.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Joins:</strong> Change to deploy to incident. API asset to Postman lifecycle to interface artifacts.</div>
+      <div class="bg-gray-50 rounded-lg p-3"><strong>Anti-Vanity:</strong> AI activity is not AI effectiveness. Acceptance rates tell you nothing about outcomes.</div>
+    </div>
+    <p class="text-xs text-gray-400 mt-3">If you cannot specify unit, cohort, validity, cost, and confounds, you cannot claim AI effectiveness.</p>
+  </div>
+
+  <!-- Sources -->
+  <div class="bg-white border border-gray-200 rounded-xl p-5">
+    <h3 class="font-bold text-sm text-aiei mb-3">Sources & Data</h3>
+    <table class="w-full text-xs">
+      <thead><tr class="text-left text-gray-400 uppercase"><th class="py-2">Source</th><th>Used In</th><th>Key Claim</th></tr></thead>
+      <tbody class="text-gray-600">
+        <tr class="border-t border-gray-100"><td class="py-2">Khalsa, Nourian, Crawford, Gray (2026)</td><td>All dimensions</td><td>AIEI framework: four orthogonal outcome dimensions, bounded 0-1</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">MIT Sloan (2025)</td><td>Context</td><td>95% of enterprise AI projects fail to prove financial returns within six months</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">Postman State of API 2025</td><td>R, Q</td><td>Only 17% of teams adopt contract testing; 34% cannot find existing APIs</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">DORA Metrics</td><td>L, R</td><td>Lead time, change failure rate, MTTR as standard engineering metrics</td></tr>
+        <tr class="border-t border-gray-100"><td class="py-2">Postman AIEI Tool (19 connectors)</td><td>All dimensions</td><td>Progressive connection: mock data fills gaps, real data replaces over time</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  </div>
+
 </div>
 </div>
 
@@ -408,6 +634,7 @@ function pickOrg(n){[50,200,1000].forEach(s=>{const e=$('org-'+s);if(s===n){e.cl
 function pickW(w){curW=w;document.querySelectorAll('.wp-btn').forEach(e=>{e.classList.remove('border-aiei','bg-aiei-bg','text-aiei','font-medium');e.classList.add('border-gray-200','text-gray-500')});const e=$('wp-'+w);e.classList.remove('border-gray-200','text-gray-500');e.classList.add('border-aiei','bg-aiei-bg','text-aiei','font-medium')}
 function tog(id){$('ac-'+id).classList.toggle('collapsed');$('ch-'+id).classList.toggle('rotated')}
 function showTab(t){$('panel-bva').classList.toggle('hidden',t!=='bva');$('panel-aiei').classList.toggle('hidden',t!=='aiei');$('tab-bva').classList.toggle('text-postman',t==='bva');$('tab-bva').classList.toggle('border-postman',t==='bva');$('tab-bva').classList.toggle('font-semibold',t==='bva');$('tab-bva').classList.toggle('text-gray-400',t!=='bva');$('tab-bva').classList.toggle('border-transparent',t!=='bva');$('tab-aiei').classList.toggle('text-aiei',t==='aiei');$('tab-aiei').classList.toggle('border-aiei',t==='aiei');$('tab-aiei').classList.toggle('font-semibold',t==='aiei');$('tab-aiei').classList.toggle('text-gray-400',t!=='aiei');$('tab-aiei').classList.toggle('border-transparent',t!=='aiei')}
+function showMethodTab(t){$('mpanel-bva').classList.toggle('hidden',t!=='bva');$('mpanel-aiei').classList.toggle('hidden',t!=='aiei');$('mtab-bva').classList.toggle('text-postman',t==='bva');$('mtab-bva').classList.toggle('border-postman',t==='bva');$('mtab-bva').classList.toggle('font-semibold',t==='bva');$('mtab-bva').classList.toggle('text-gray-400',t!=='bva');$('mtab-bva').classList.toggle('border-transparent',t!=='bva');$('mtab-aiei').classList.toggle('text-aiei',t==='aiei');$('mtab-aiei').classList.toggle('border-aiei',t==='aiei');$('mtab-aiei').classList.toggle('font-semibold',t==='aiei');$('mtab-aiei').classList.toggle('text-gray-400',t!=='aiei');$('mtab-aiei').classList.toggle('border-transparent',t!=='aiei')}
 function showPage(p){['calc','results','method'].forEach(pg=>$('page-'+pg).classList.toggle('hidden',pg!==p));
   $('nav-calc').classList.toggle('text-postman',p==='calc');$('nav-calc').classList.toggle('border-postman',p==='calc');$('nav-calc').classList.toggle('font-semibold',p==='calc');$('nav-calc').classList.toggle('text-gray-400',p!=='calc');$('nav-calc').classList.toggle('border-transparent',p!=='calc');
   const nr=$('nav-results');if(window._bva){nr.classList.remove('text-gray-300','cursor-default');nr.classList.toggle('text-postman',p==='results');nr.classList.toggle('border-postman',p==='results');nr.classList.toggle('font-semibold',p==='results');nr.classList.toggle('text-gray-400',p!=='results');nr.classList.toggle('border-transparent',p!=='results');nr.classList.add('cursor-pointer')}

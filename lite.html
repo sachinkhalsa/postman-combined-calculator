@@ -12,9 +12,11 @@ tailwind.config={theme:{extend:{colors:{postman:{DEFAULT:'#FF6C37',hover:'#E0552
 <style>
 body{font-family:'Inter',sans-serif}
 .detail-panel{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s ease,opacity .3s ease}
-.detail-panel.open{max-height:4000px;opacity:1}
+.detail-panel.open{max-height:5000px;opacity:1}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes countUp{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 .fade-in{animation:fadeIn .3s ease-out forwards}
+.count-up{animation:countUp .4s ease-out forwards}
 @media print{.no-print{display:none!important}body{background:#fff}#page-results{display:block!important}#page-input{display:none!important}header{position:static!important}}
 </style>
 </head>
@@ -43,7 +45,7 @@ body{font-family:'Inter',sans-serif}
 
   <div class="text-center mb-8">
     <h2 class="text-2xl font-bold text-gray-900 mb-2">Three clicks to a value story</h2>
-    <p class="text-sm text-gray-500">Pick your audience, company size, and hit Calculate. Adjust defaults if you know the specifics.</p>
+    <p class="text-sm text-gray-500">Pick your audience, company size, and hit Calculate. The engine does the rest.</p>
   </div>
 
   <!-- Step 1: Audience -->
@@ -62,6 +64,14 @@ body{font-family:'Inter',sans-serif}
         <div class="font-semibold text-sm">Head of QE</div>
         <div class="text-[11px] text-gray-500">Quality & Defects</div>
       </button>
+    </div>
+    <!-- V12 Pillars (changes per audience) -->
+    <div id="v12pillars" class="mt-3 grid grid-cols-2 gap-2 fade-in"></div>
+    <!-- Industry Stat -->
+    <div id="industryStat" class="mt-3 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-600 flex items-start gap-2.5 fade-in">
+      <svg class="w-4 h-4 text-postman mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span id="statText">51% of orgs cite unauthorized AI agent API calls as their #1 security concern.</span>
+      <span id="statSource" class="text-[10px] text-gray-400 shrink-0 self-end">State of API 2025</span>
     </div>
   </section>
 
@@ -87,19 +97,47 @@ body{font-family:'Inter',sans-serif}
   <!-- Agent Mode -->
   <section class="mb-6">
     <div class="flex items-center gap-3 bg-agent-bg border border-agent/20 rounded-xl px-4 py-3">
-      <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="agentMode" checked class="sr-only peer"><div class="w-9 h-5 bg-gray-300 peer-checked:bg-agent rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div></label>
+      <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="agentMode" checked onchange="refreshPreview()" class="sr-only peer"><div class="w-9 h-5 bg-gray-300 peer-checked:bg-agent rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div></label>
       <span class="text-sm font-medium">Agent Mode (V12+)</span>
       <span class="text-[11px] text-gray-400">AI test gen, spec authoring, shadow API discovery</span>
     </div>
   </section>
 
-  <!-- Calculate Button -->
-  <button onclick="calc()" class="w-full bg-postman hover:bg-postman-hover text-white font-semibold py-3.5 rounded-xl transition-colors text-base mb-6">
-    Calculate Value
+  <!-- LIVE PREVIEW CARD -->
+  <div id="previewCard" class="bg-white border border-gray-200 rounded-2xl p-6 mb-6 count-up">
+    <div class="flex items-start justify-between mb-4">
+      <div>
+        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Estimated Annual Value</p>
+        <div class="text-4xl font-bold text-postman" id="previewVal">$1.4M</div>
+      </div>
+      <div class="text-right">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-2xl font-bold text-aiei" id="previewAIEI">0.65</span>
+          <span id="previewCls" class="text-[10px] px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">Mixed</span>
+        </div>
+        <div class="text-[10px] text-gray-400" id="previewWeightLabel">Quality-First weights</div>
+      </div>
+    </div>
+    <div class="border-t border-gray-100 pt-3 mb-3">
+      <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Top v12 Capabilities Driving This Value</p>
+      <div id="previewDrivers" class="space-y-2"></div>
+    </div>
+    <div class="flex items-center gap-4 text-xs text-gray-400">
+      <span>Investment: <strong class="text-gray-600" id="previewInv">$29K</strong></span>
+      <span class="w-px h-3 bg-gray-200"></span>
+      <span>ROI: <strong class="text-postman" id="previewROI">47x</strong></span>
+      <span class="w-px h-3 bg-gray-200"></span>
+      <span id="previewContext" class="italic">Mid-Market Platform Eng. with Agent Mode</span>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <button onclick="calc()" class="w-full bg-postman hover:bg-postman-hover text-white font-semibold py-3.5 rounded-xl transition-colors text-base mb-6 no-print">
+    View Full Analysis
   </button>
 
   <!-- Customize (progressive disclosure) -->
-  <div class="border-t border-gray-200 pt-4">
+  <div class="border-t border-gray-200 pt-4 no-print">
     <button onclick="toggleCustomize()" id="customizeBtn" class="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-600 mx-auto">
       <svg id="customizeChev" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
       Customize inputs for this customer
@@ -107,45 +145,43 @@ body{font-family:'Inter',sans-serif}
 
     <div id="customizePanel" class="detail-panel mt-4">
 
-      <!-- Core overrides -->
       <div class="bg-white border border-gray-200 rounded-xl p-5 mb-4">
         <h4 class="font-semibold text-sm text-gray-700 mb-3">Company Profile</h4>
         <div class="grid grid-cols-4 gap-3">
-          <div><label class="text-[11px] text-gray-500">Developers</label><input type="number" id="totalDevs" value="50" min="1" class="inp w-full"></div>
-          <div><label class="text-[11px] text-gray-500">Hourly Cost ($)</label><input type="number" id="hourlyRate" value="80" min="1" class="inp w-full"></div>
-          <div><label class="text-[11px] text-gray-500">Releases/Yr</label><input type="number" id="annualReleases" value="24" min="1" class="inp w-full"></div>
-          <div><label class="text-[11px] text-gray-500">QA Engineers</label><input type="number" id="qaEngineers" value="5" min="0" class="inp w-full"></div>
+          <div><label class="text-[11px] text-gray-500">Developers</label><input type="number" id="totalDevs" value="50" min="1" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-[11px] text-gray-500">Hourly Cost ($)</label><input type="number" id="hourlyRate" value="80" min="1" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-[11px] text-gray-500">Releases/Yr</label><input type="number" id="annualReleases" value="24" min="1" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-[11px] text-gray-500">QA Engineers</label><input type="number" id="qaEngineers" value="5" min="0" class="inp w-full" onchange="refreshPreview()"></div>
         </div>
       </div>
 
-      <!-- BVA Inputs (grouped, compact) -->
       <div class="bg-white border border-gray-200 rounded-xl p-5 mb-4">
         <div class="flex items-center justify-between mb-3">
           <h4 class="font-semibold text-sm text-gray-700">Postman Value Inputs</h4>
           <button onclick="resetBVA()" class="text-[10px] text-gray-400 hover:text-gray-600">Reset to defaults</button>
         </div>
         <div class="grid grid-cols-3 gap-3 text-[11px]">
-          <div><label class="text-gray-500">Hrs lost/week</label><input type="number" id="hoursLost" value="3" min="0" step="0.5" class="inp w-full"></div>
-          <div><label class="text-gray-500">Net New APIs/Yr</label><input type="number" id="netNewApis" value="20" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Hrs per API</label><input type="number" id="hrsPerApi" value="8" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Integrations/Yr</label><input type="number" id="integrationsYear" value="12" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">TTFC (Hrs)</label><input type="number" id="ttfcHours" value="4" min="0" step="0.5" class="inp w-full"></div>
-          <div><label class="text-gray-500">QA Salary ($)</label><input type="number" id="qaSalary" value="120000" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Regression (Hrs)</label><input type="number" id="regressionCycle" value="20" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">PRs Reviewed/Yr</label><input type="number" id="prsReviewed" value="500" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Mins per Review</label><input type="number" id="minsPerReview" value="15" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Outages/Yr</label><input type="number" id="outagesYear" value="4" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Cost per Outage ($)</label><input type="number" id="costPerOutage" value="50000" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Undiscovered APIs</label><input type="number" id="undiscoveredApis" value="5" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Incident Cost ($)</label><input type="number" id="incidentCost" value="10000" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Weekly Rev ($)</label><input type="number" id="weeklyRevenue" value="50000" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Delayed Rel/Yr</label><input type="number" id="delayedReleases" value="3" min="0" class="inp w-full"></div>
-          <div><label class="text-gray-500">Avg Delay (Wks)</label><input type="number" id="avgDelayWeeks" value="2" min="0" step="0.5" class="inp w-full"></div>
-          <div><label class="text-gray-500">Redundant Proj/Yr</label><input type="number" id="redundantProjects" value="1" min="0" class="inp w-full"></div>
+          <div><label class="text-gray-500">Hrs lost/week</label><input type="number" id="hoursLost" value="3" min="0" step="0.5" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Net New APIs/Yr</label><input type="number" id="netNewApis" value="20" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Hrs per API</label><input type="number" id="hrsPerApi" value="8" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Integrations/Yr</label><input type="number" id="integrationsYear" value="12" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">TTFC (Hrs)</label><input type="number" id="ttfcHours" value="4" min="0" step="0.5" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">QA Salary ($)</label><input type="number" id="qaSalary" value="120000" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Regression (Hrs)</label><input type="number" id="regressionCycle" value="20" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">PRs Reviewed/Yr</label><input type="number" id="prsReviewed" value="500" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Mins per Review</label><input type="number" id="minsPerReview" value="15" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Outages/Yr</label><input type="number" id="outagesYear" value="4" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Cost per Outage ($)</label><input type="number" id="costPerOutage" value="50000" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Undiscovered APIs</label><input type="number" id="undiscoveredApis" value="5" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Incident Cost ($)</label><input type="number" id="incidentCost" value="10000" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Weekly Rev ($)</label><input type="number" id="weeklyRevenue" value="50000" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Delayed Rel/Yr</label><input type="number" id="delayedReleases" value="3" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Avg Delay (Wks)</label><input type="number" id="avgDelayWeeks" value="2" min="0" step="0.5" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Redundant Proj/Yr</label><input type="number" id="redundantProjects" value="1" min="0" class="inp w-full" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">New Hires/Yr</label><input type="number" id="newHires" value="10" min="0" class="inp w-full" onchange="refreshPreview()"></div>
         </div>
       </div>
 
-      <!-- AIEI Inputs (grouped, compact) -->
       <div class="bg-white border border-aiei/20 rounded-xl p-5 mb-4">
         <div class="flex items-center justify-between mb-3">
           <h4 class="font-semibold text-sm text-aiei">AI Effectiveness Inputs</h4>
@@ -158,25 +194,25 @@ body{font-family:'Inter',sans-serif}
           </div>
         </div>
         <div class="grid grid-cols-4 gap-3 text-[11px]">
-          <div><label class="text-gray-500">Defect (AI)</label><input type="number" id="defectRateAI" value="0.05" min="0" max="1" step="0.01" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Defect (Non-AI)</label><input type="number" id="defectRateNonAI" value="0.08" min="0" max="1" step="0.01" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Test Pass Delta</label><input type="number" id="testPassDelta" value="0.95" min="0" max="1" step="0.01" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Rework (AI)</label><input type="number" id="reworkRateAI" value="0.15" min="0" max="1" step="0.01" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Cycle AI (hrs)</label><input type="number" id="cycleTimeAI" value="12" min="0" step="0.5" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Cycle Non-AI (hrs)</label><input type="number" id="cycleTimeNonAI" value="20" min="0" step="0.5" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">CFR (AI)</label><input type="number" id="cfrAI" value="0.05" min="0" max="1" step="0.01" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">SLO Attainment</label><input type="number" id="sloAttainment" value="0.95" min="0" max="1" step="0.01" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Contract Catch</label><input type="number" id="contractCatch" value="0.90" min="0" max="1" step="0.01" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Uptime (AI)</label><input type="number" id="uptimeAI" value="0.99" min="0" max="1" step="0.01" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Adaptability</label><input type="number" id="adaptability" value="0.85" min="0" max="1" step="0.01" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Labor Saved ($)</label><input type="number" id="laborSaved" value="150000" min="0" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Overhead ($)</label><input type="number" id="overheadValue" value="30000" min="0" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Token Cost ($)</label><input type="number" id="tokenCost" value="20000" min="0" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Infra Cost ($)</label><input type="number" id="infraCost" value="10000" min="0" class="inp w-full ai"></div>
-          <div><label class="text-gray-500">Tooling Cost ($)</label><input type="number" id="toolingCost" value="15000" min="0" class="inp w-full ai"></div>
+          <div><label class="text-gray-500">Defect (AI)</label><input type="number" id="defectRateAI" value="0.05" min="0" max="1" step="0.01" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Defect (Non-AI)</label><input type="number" id="defectRateNonAI" value="0.08" min="0" max="1" step="0.01" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Test Pass Delta</label><input type="number" id="testPassDelta" value="0.95" min="0" max="1" step="0.01" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Rework (AI)</label><input type="number" id="reworkRateAI" value="0.15" min="0" max="1" step="0.01" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Cycle AI (hrs)</label><input type="number" id="cycleTimeAI" value="12" min="0" step="0.5" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Cycle Non-AI (hrs)</label><input type="number" id="cycleTimeNonAI" value="20" min="0" step="0.5" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">CFR (AI)</label><input type="number" id="cfrAI" value="0.05" min="0" max="1" step="0.01" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">SLO Attainment</label><input type="number" id="sloAttainment" value="0.95" min="0" max="1" step="0.01" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Contract Catch</label><input type="number" id="contractCatch" value="0.90" min="0" max="1" step="0.01" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Uptime (AI)</label><input type="number" id="uptimeAI" value="0.99" min="0" max="1" step="0.01" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Adaptability</label><input type="number" id="adaptability" value="0.85" min="0" max="1" step="0.01" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Labor Saved ($)</label><input type="number" id="laborSaved" value="150000" min="0" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Overhead ($)</label><input type="number" id="overheadValue" value="30000" min="0" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Token Cost ($)</label><input type="number" id="tokenCost" value="20000" min="0" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Infra Cost ($)</label><input type="number" id="infraCost" value="10000" min="0" class="inp w-full ai" onchange="refreshPreview()"></div>
+          <div><label class="text-gray-500">Tooling Cost ($)</label><input type="number" id="toolingCost" value="15000" min="0" class="inp w-full ai" onchange="refreshPreview()"></div>
         </div>
         <div class="mt-2 grid grid-cols-4 gap-3 text-[11px]">
-          <div><label class="text-gray-500">Target ROI</label><input type="number" id="targetROI" value="2" min="0.1" step="0.1" class="inp w-full ai"></div>
+          <div><label class="text-gray-500">Target ROI</label><input type="number" id="targetROI" value="2" min="0.1" step="0.1" class="inp w-full ai" onchange="refreshPreview()"></div>
         </div>
       </div>
 
@@ -186,7 +222,7 @@ body{font-family:'Inter',sans-serif}
 </div>
 </div>
 
-<!-- RESULTS PAGE (identical presentation-grade output) -->
+<!-- RESULTS PAGE -->
 <div id="page-results" class="hidden">
 <div class="max-w-6xl mx-auto px-6 py-8">
 
@@ -269,39 +305,94 @@ body{font-family:'Inter',sans-serif}
 
 <script>
 const W={quality:{wQ:.35,wL:.2,wR:.35,wC:.1},speed:{wQ:.2,wL:.35,wR:.25,wC:.2},reliability:{wQ:.25,wL:.2,wR:.4,wC:.15},cost:{wQ:.25,wL:.25,wR:.2,wC:.3},balanced:{wQ:.25,wL:.25,wR:.25,wC:.25}};
-let curW='quality',curAud='platform';
+let curW='quality',curAud='platform',curOrg=50;
 const $=id=>document.getElementById(id),v=id=>+($(id).value),fm=n=>new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(n);
+function fmShort(n){if(n>=1e6)return'$'+(n/1e6).toFixed(1)+'M';if(n>=1e3)return'$'+(n/1e3).toFixed(0)+'K';return'$'+fm(n)}
 
 const orgDefaults={
-  50:{hourlyRate:80,annualReleases:24,qaEngineers:5,qaSalary:120000,hoursLost:3,netNewApis:20,hrsPerApi:8,integrationsYear:12,ttfcHours:4,regressionCycle:20,prsReviewed:500,minsPerReview:15,outagesYear:4,costPerOutage:50000,undiscoveredApis:5,incidentCost:10000,weeklyRevenue:50000,delayedReleases:3,avgDelayWeeks:2,redundantProjects:1,laborSaved:150000,overheadValue:30000,tokenCost:20000,infraCost:10000,toolingCost:15000},
-  200:{hourlyRate:80,annualReleases:36,qaEngineers:8,qaSalary:115000,hoursLost:3,netNewApis:35,hrsPerApi:7,integrationsYear:20,ttfcHours:5,regressionCycle:18,prsReviewed:1000,minsPerReview:12,outagesYear:5,costPerOutage:45000,undiscoveredApis:10,incidentCost:15000,weeklyRevenue:100000,delayedReleases:5,avgDelayWeeks:2,redundantProjects:2,laborSaved:350000,overheadValue:55000,tokenCost:40000,infraCost:18000,toolingCost:25000},
-  1000:{hourlyRate:85,annualReleases:52,qaEngineers:20,qaSalary:115000,hoursLost:3.5,netNewApis:80,hrsPerApi:8,integrationsYear:50,ttfcHours:5,regressionCycle:24,prsReviewed:5000,minsPerReview:15,outagesYear:8,costPerOutage:75000,undiscoveredApis:30,incidentCost:20000,weeklyRevenue:200000,delayedReleases:8,avgDelayWeeks:2,redundantProjects:5,laborSaved:800000,overheadValue:200000,tokenCost:120000,infraCost:50000,toolingCost:80000}
+  50:{hourlyRate:80,annualReleases:24,qaEngineers:5,qaSalary:120000,hoursLost:3,netNewApis:20,hrsPerApi:8,integrationsYear:12,ttfcHours:4,regressionCycle:20,prsReviewed:500,minsPerReview:15,outagesYear:4,costPerOutage:50000,undiscoveredApis:5,incidentCost:10000,weeklyRevenue:50000,delayedReleases:3,avgDelayWeeks:2,redundantProjects:1,newHires:10,laborSaved:150000,overheadValue:30000,tokenCost:20000,infraCost:10000,toolingCost:15000},
+  200:{hourlyRate:80,annualReleases:36,qaEngineers:8,qaSalary:115000,hoursLost:3,netNewApis:35,hrsPerApi:7,integrationsYear:20,ttfcHours:5,regressionCycle:18,prsReviewed:1000,minsPerReview:12,outagesYear:5,costPerOutage:45000,undiscoveredApis:10,incidentCost:15000,weeklyRevenue:100000,delayedReleases:5,avgDelayWeeks:2,redundantProjects:2,newHires:25,laborSaved:350000,overheadValue:55000,tokenCost:40000,infraCost:18000,toolingCost:25000},
+  1000:{hourlyRate:85,annualReleases:52,qaEngineers:20,qaSalary:115000,hoursLost:3.5,netNewApis:80,hrsPerApi:8,integrationsYear:50,ttfcHours:5,regressionCycle:24,prsReviewed:5000,minsPerReview:15,outagesYear:8,costPerOutage:75000,undiscoveredApis:30,incidentCost:20000,weeklyRevenue:200000,delayedReleases:8,avgDelayWeeks:2,redundantProjects:5,newHires:100,laborSaved:800000,overheadValue:200000,tokenCost:120000,infraCost:50000,toolingCost:80000}
+};
+
+const pillarData={
+  platform:[
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>',title:'API Catalog',desc:'Single pane of glass for all APIs and services'},
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',title:'Agent Mode',desc:'Shadow API discovery for ungoverned endpoints'},
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>',title:'Governance',desc:'Automated Spectral linting replaces manual reviews'},
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>',title:'Org Mode',desc:'Clean boundary management across teams'}
+  ],
+  product:[
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>',title:'Agent Mode',desc:'AI code gen, test gen, and spec authoring'},
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',title:'Git-Native Workflows',desc:'Feature branches, local mocks, CLI-first'},
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>',title:'SDK Distribution',desc:'Native SDK generation for consumer onboarding'},
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>',title:'API Insights',desc:'Eliminate duplicate builds through discovery'}
+  ],
+  qe:[
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>',title:'Agent Mode',desc:'AI test generation replaces 80% of manual effort'},
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',title:'CLI Integration',desc:'Automated quality gates in CI/CD pipelines'},
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',title:'Contract Testing',desc:'Catch breaking changes before production'},
+    {icon:'<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>',title:'Collection Runner',desc:'Compress regression from days to minutes'}
+  ]
+};
+
+const statData={
+  platform:{text:'51% of orgs cite unauthorized AI agent API calls as their #1 security concern.',source:'State of API 2025'},
+  product:{text:'93% of teams face collaboration blockers: documentation struggles, duplicate efforts, discovery problems.',source:'State of API 2025'},
+  qe:{text:'Only 17% of teams adopt contract testing, yet 34% cannot find existing APIs.',source:'State of API 2025'}
+};
+
+const driverMeta={
+  productivity:{label:'Developer Productivity',v12:'Agent Mode productivity boost (1.35x)'},
+  governance:{label:'Governance Automation',v12:'Spectral linting via API Catalog'},
+  shadowAPI:{label:'Shadow API Discovery',v12:'Agent Mode discovers ungoverned endpoints'},
+  outages:{label:'Outage Prevention',v12:'Monitors + contract testing in CI/CD'},
+  integration:{label:'Integration Acceleration',v12:'API Catalog reduces TTFC to minutes'},
+  apiDesign:{label:'API Design Efficiency',v12:'AI-assisted spec authoring (45% faster)'},
+  costOfDelay:{label:'Cost of Delay',v12:'Git-native workflows accelerate releases'},
+  fteEfficiency:{label:'QA FTE Efficiency',v12:'Agent Mode AI test generation (80%)'},
+  testCompression:{label:'Test Compression',v12:'Collection Runner in CI/CD pipelines'},
+  avoidedRework:{label:'Avoided Rework',v12:'Private API Network prevents duplicates'}
 };
 
 function pickAud(a){
   curAud=a;
   document.querySelectorAll('.aud-btn').forEach(e=>{e.classList.remove('border-postman','bg-postman-bg');e.classList.add('border-gray-200','bg-white')});
-  const e=$('aud-'+a);e.classList.remove('border-gray-200','bg-white');e.classList.add('border-postman','bg-postman-bg');
+  $('aud-'+a).classList.remove('border-gray-200','bg-white');$('aud-'+a).classList.add('border-postman','bg-postman-bg');
   const wMap={platform:'quality',product:'speed',qe:'reliability'};
   pickW(wMap[a]||'quality');
+  renderPillars(a);
+  renderStat(a);
+  refreshPreview();
 }
 
 function pickOrg(n){
+  curOrg=n;
   [50,200,1000].forEach(s=>{const e=$('org-'+s);if(s===n){e.classList.remove('border-gray-200','bg-white');e.classList.add('border-postman','bg-postman-bg')}else{e.classList.remove('border-postman','bg-postman-bg');e.classList.add('border-gray-200','bg-white')}});
   $('totalDevs').value=n;
   const d=orgDefaults[n]||orgDefaults[50];
   Object.entries(d).forEach(([k,val])=>{const el=$(k);if(el)el.value=val});
+  refreshPreview();
 }
 
-function pickW(w){curW=w;document.querySelectorAll('.wp-btn').forEach(e=>{e.classList.remove('border-aiei','bg-aiei-bg','text-aiei','font-medium');e.classList.add('border-gray-200','text-gray-400')});const e=$('wp-'+w);if(e){e.classList.remove('border-gray-200','text-gray-400');e.classList.add('border-aiei','bg-aiei-bg','text-aiei','font-medium')}}
+function pickW(w){curW=w;document.querySelectorAll('.wp-btn').forEach(e=>{e.classList.remove('border-aiei','bg-aiei-bg','text-aiei','font-medium');e.classList.add('border-gray-200','text-gray-400')});const e=$('wp-'+w);if(e){e.classList.remove('border-gray-200','text-gray-400');e.classList.add('border-aiei','bg-aiei-bg','text-aiei','font-medium')}refreshPreview()}
+
+function renderPillars(a){
+  const pillars=pillarData[a]||pillarData.platform;
+  $('v12pillars').innerHTML=pillars.map(p=>'<div class="flex items-start gap-2.5 bg-white border border-gray-200 rounded-lg px-3 py-2.5"><div class="text-postman mt-0.5 shrink-0">'+p.icon+'</div><div><div class="font-semibold text-xs text-gray-800">'+p.title+'</div><div class="text-[11px] text-gray-500">'+p.desc+'</div></div></div>').join('');
+}
+
+function renderStat(a){
+  const s=statData[a]||statData.platform;
+  $('statText').textContent=s.text;
+  $('statSource').textContent=s.source;
+}
 
 function toggleCustomize(){const p=$('customizePanel'),c=$('customizeChev');p.classList.toggle('open');c.style.transform=p.classList.contains('open')?'rotate(180deg)':''}
-
-function resetBVA(){pickOrg(v('totalDevs')>=500?1000:v('totalDevs')>=100?200:50)}
-
+function resetBVA(){pickOrg(curOrg)}
 function showInput(){$('page-input').classList.remove('hidden');$('page-results').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})}
 
-function calc(){
+function computeAll(){
   const am=$('agentMode').checked,d=v('totalDevs'),r=v('hourlyRate'),ar=r*1.25;
   const bva={};
   bva.productivity=d*(v('hoursLost')*.5)*52*r*(am?1.35:1);
@@ -327,6 +418,34 @@ function calc(){
   const aiei=w.wQ*Q+w.wL*L+w.wR*R+w.wC*C;
   const cls=aiei>=.7?'Effective':aiei>=.4?'Mixed':'Technical Debt';
 
+  return{bva,total,inv,roi,Q,L,R,C,aiei,cls};
+}
+
+function refreshPreview(){
+  const r=computeAll();
+  $('previewVal').textContent=fmShort(r.total);
+  $('previewAIEI').textContent=r.aiei.toFixed(2);
+  const ce=$('previewCls');ce.textContent=r.cls;
+  ce.className='text-[10px] px-2 py-0.5 rounded-full '+(r.cls==='Effective'?'bg-green-100 text-green-700':r.cls==='Mixed'?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700');
+  $('previewWeightLabel').textContent=curW.charAt(0).toUpperCase()+curW.slice(1)+'-First weights';
+  $('previewInv').textContent=fmShort(r.inv);
+  $('previewROI').textContent=r.roi.toFixed(0)+'x';
+
+  const audLabel={platform:'Platform Eng.',product:'Product Eng.',qe:'Head of QE'};
+  const orgLabel={50:'Mid-Market',200:'Large',1000:'Enterprise'};
+  const am=$('agentMode').checked;
+  $('previewContext').textContent=(orgLabel[curOrg]||'Custom')+' '+audLabel[curAud]+(am?' with Agent Mode':'');
+
+  const top3=Object.entries(r.bva).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  $('previewDrivers').innerHTML=top3.map(([k,val])=>{
+    const m=driverMeta[k]||{label:k,v12:''};
+    return'<div class="flex items-start gap-3"><div class="w-5 h-5 rounded-full bg-postman/10 flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3 h-3 text-postman" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><div class="flex-1"><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-800">'+m.label+'</span><span class="text-sm font-semibold text-postman">'+fmShort(val)+'</span></div><div class="text-[11px] text-gray-400">v12: '+m.v12+'</div></div></div>';
+  }).join('');
+}
+
+function calc(){
+  const r=computeAll();
+  const{bva,total,inv,roi,Q,L,R,C,aiei,cls}=r;
   window._bva={bva,total,inv,roi};window._aiei={aiei,Q,L,R,C,cls};
 
   $('r-heroVal').textContent='$'+fm(total);
@@ -335,10 +454,9 @@ function calc(){
   $('r-aieiTop').textContent=aiei.toFixed(2);
   const ct=$('r-clsTop');ct.textContent=cls;ct.className='text-xs px-2 py-0.5 rounded-full '+(cls==='Effective'?'bg-green-100 text-green-700':cls==='Mixed'?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700');
 
-  const labels={productivity:'Developer Productivity',governance:'Governance Automation',shadowAPI:'Shadow API Discovery',outages:'Outage Prevention',integration:'Integration Acceleration',apiDesign:'API Design Efficiency',costOfDelay:'Cost of Delay',fteEfficiency:'QA FTE Efficiency',testCompression:'Test Compression',avoidedRework:'Avoided Rework'};
   const sorted=Object.entries(bva).sort((a,b)=>b[1]-a[1]);
   const maxBva=sorted[0]?sorted[0][1]:1;
-  $('r-breakdown').innerHTML=sorted.map(([k,val])=>{const pct=maxBva>0?(val/maxBva*100):0;return'<div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">'+(labels[k]||k)+'</span><span class="font-semibold">$'+fm(val)+'</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-postman rounded-full h-2 transition-all" style="width:'+pct+'%"></div></div></div>'}).join('');
+  $('r-breakdown').innerHTML=sorted.map(([k,val])=>{const pct=maxBva>0?(val/maxBva*100):0;const m=driverMeta[k]||{label:k};return'<div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">'+(m.label)+'</span><span class="font-semibold">$'+fm(val)+'</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-postman rounded-full h-2 transition-all" style="width:'+pct+'%"></div></div></div>'}).join('');
   $('r-totalLine').textContent='$'+fm(total);
 
   $('r-aieiScore').textContent=aiei.toFixed(2);
@@ -357,8 +475,9 @@ function calc(){
   else{ri.className='mt-4 rounded-xl p-4 text-sm bg-red-50 text-red-800 border border-red-200';ri.innerHTML='<strong>Technical Debt risk.</strong> Weakest: <strong>'+weakest.n+'</strong> ('+weakest.v.toFixed(2)+'). Pause AI expansion and invest in measurement infrastructure, governance automation, and contract testing.'}
 
   const top5=sorted.slice(0,5);
-  $('r-topDrivers').innerHTML=top5.map(([k,val],i)=>'<div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-postman/10 text-postman text-xs font-bold flex items-center justify-center">'+(i+1)+'</span><span class="flex-1 text-gray-700">'+(labels[k]||k)+'</span><span class="font-semibold">$'+fm(val)+'</span></div>').join('');
+  $('r-topDrivers').innerHTML=top5.map(([k,val],i)=>{const m=driverMeta[k]||{label:k};return'<div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-postman/10 text-postman text-xs font-bold flex items-center justify-center">'+(i+1)+'</span><span class="flex-1 text-gray-700">'+m.label+'</span><span class="font-semibold">$'+fm(val)+'</span></div>'}).join('');
 
+  const am=$('agentMode').checked;
   $('r-stratOutcome').innerHTML='<div>Postman drives <strong class="text-postman">$'+fm(total)+'</strong> in annual efficiency gains across '+Object.keys(bva).length+' value categories.</div><div>At '+roi.toFixed(1)+'x ROI, every dollar invested returns $'+roi.toFixed(0)+' in platform value.</div>'+(am?'<div>Agent Mode (v12) contributes additional value across productivity, API design, and test automation.</div>':'');
 
   if(cls==='Effective'){$('r-nextSteps').innerHTML='<div>1. Present these results to executive stakeholders.</div><div>2. Expand AI adoption to additional teams.</div><div>3. Connect the AIEI Tool to validate with real data.</div><div>4. Establish quarterly measurement cadence.</div>'}
@@ -370,10 +489,13 @@ function calc(){
 }
 
 function xCopy(){const b=window._bva||{},a=window._aiei||{};
-  const labels={productivity:'Developer Productivity',governance:'Governance Automation',shadowAPI:'Shadow API Discovery',outages:'Outage Prevention',integration:'Integration Acceleration',apiDesign:'API Design Efficiency',costOfDelay:'Cost of Delay',fteEfficiency:'QA FTE Efficiency',testCompression:'Test Compression',avoidedRework:'Avoided Rework'};
-  let bd='';if(b.bva){const sorted=Object.entries(b.bva).sort((x,y)=>y[1]-x[1]);bd='\n\nVALUE BREAKDOWN\n'+sorted.map(([k,val])=>(labels[k]||k)+': $'+fm(val)).join('\n')}
+  let bd='';if(b.bva){const sorted=Object.entries(b.bva).sort((x,y)=>y[1]-x[1]);bd='\n\nVALUE BREAKDOWN\n'+sorted.map(([k,val])=>(driverMeta[k]?.label||k)+': $'+fm(val)).join('\n')}
   let s='EXECUTIVE VALUE SUMMARY\n\nPostman Value: $'+fm(b.total||0)+' annual gains\nInvestment: $'+fm(b.inv||0)+'\nROI: '+(b.roi||0).toFixed(1)+'x'+bd+'\n\nAI EFFECTIVENESS INDEX: '+(a.aiei||0).toFixed(2)+' ('+(a.cls||'-')+')\nQ (Quality): '+(a.Q||0).toFixed(2)+'\nL (Lead Time): '+(a.L||0).toFixed(2)+'\nR (Reliability): '+(a.R||0).toFixed(2)+'\nC (Cost): '+(a.C||0).toFixed(2)+'\n\nEstimate based on Forrester TEI and customer benchmarks. Run AIEI Tool for measured results.';
   navigator.clipboard.writeText(s).then(()=>{const e=$('copyBtn');e.textContent='Copied!';setTimeout(()=>e.textContent='Copy Summary',2000)})}
+
+renderPillars('platform');
+renderStat('platform');
+refreshPreview();
 </script>
 </body>
 </html>

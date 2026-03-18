@@ -129,6 +129,7 @@ body{font-family:'Inter',sans-serif}
       <span class="w-px h-3 bg-gray-200"></span>
       <span id="previewContext" class="italic">Mid-Market Platform Eng. with Agent Mode</span>
     </div>
+    <div class="mt-3 pt-3 border-t border-gray-100 text-[11px] text-gray-400 italic" id="previewDisclaimer">Based on industry benchmarks for a ~50-developer org. Customize below to match your customer.</div>
   </div>
 
   <!-- CTA -->
@@ -140,7 +141,7 @@ body{font-family:'Inter',sans-serif}
   <div class="border-t border-gray-200 pt-4 no-print">
     <button onclick="toggleCustomize()" id="customizeBtn" class="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-600 mx-auto">
       <svg id="customizeChev" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-      Customize inputs for this customer
+      Adjust to match your customer's reality
     </button>
 
     <div id="customizePanel" class="detail-panel mt-4">
@@ -436,6 +437,7 @@ function refreshPreview(){
   const orgLabel={50:'Mid-Market',200:'Large',1000:'Enterprise'};
   const am=$('agentMode').checked;
   $('previewContext').textContent=(orgLabel[curOrg]||'Custom')+' '+audLabel[curAud]+(am?' with Agent Mode':'');
+  $('previewDisclaimer').textContent='Based on industry benchmarks for a ~'+v('totalDevs')+'-developer org. Customize below to match your customer.';
 
   const top3=Object.entries(r.bva).sort((a,b)=>b[1]-a[1]).slice(0,3);
   $('previewDrivers').innerHTML=top3.map(([k,val])=>{

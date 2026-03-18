@@ -570,16 +570,16 @@ const statData={
 };
 
 const driverMeta={
-  productivity:{label:'Developer Productivity',v12:'Agent Mode productivity boost (1.35x)',dims:['L','C']},
-  governance:{label:'Governance Automation',v12:'Spectral linting via API Catalog',dims:['Q','R']},
-  shadowAPI:{label:'Shadow API Discovery',v12:'Agent Mode discovers ungoverned endpoints',dims:['R']},
-  outages:{label:'Outage Prevention',v12:'Monitors + contract testing in CI/CD',dims:['R']},
-  integration:{label:'Integration Acceleration',v12:'API Catalog reduces TTFC to minutes',dims:['L']},
-  apiDesign:{label:'API Design Efficiency',v12:'AI-assisted spec authoring (45% faster)',dims:['Q','L']},
-  costOfDelay:{label:'Cost of Delay',v12:'Git-native workflows accelerate releases',dims:['L','R']},
-  fteEfficiency:{label:'QA FTE Efficiency',v12:'Agent Mode AI test generation (80%)',dims:['Q','C']},
-  testCompression:{label:'Test Compression',v12:'Collection Runner in CI/CD pipelines',dims:['Q','R']},
-  avoidedRework:{label:'Avoided Rework',v12:'Private API Network prevents duplicates',dims:['C']}
+  productivity:{label:'Developer Productivity',v12:'Agent Mode productivity boost (1.35x)',dims:['L','C'],bench:'3 hrs/wk lost to env setup',src:'Forrester TEI'},
+  governance:{label:'Governance Automation',v12:'Spectral linting via API Catalog',dims:['Q','R'],bench:'15 min/PR manual review',src:'Forrester TEI'},
+  shadowAPI:{label:'Shadow API Discovery',v12:'Agent Mode discovers ungoverned endpoints',dims:['R'],bench:'34% of devs can\'t find APIs',src:'State of API 2025'},
+  outages:{label:'Outage Prevention',v12:'Monitors + contract testing in CI/CD',dims:['R'],bench:'30% outage reduction, yr 1',src:'Forrester TEI'},
+  integration:{label:'Integration Acceleration',v12:'API Catalog reduces TTFC to minutes',dims:['L'],bench:'4 hr avg time-to-first-call',src:'Customer benchmarks'},
+  apiDesign:{label:'API Design Efficiency',v12:'AI-assisted spec authoring (45% faster)',dims:['Q','L'],bench:'25% design cycle reduction',src:'Forrester TEI'},
+  costOfDelay:{label:'Cost of Delay',v12:'Git-native workflows accelerate releases',dims:['L','R'],bench:'Dependency wait: top-3 bottleneck',src:'Puppet DevOps'},
+  fteEfficiency:{label:'QA FTE Efficiency',v12:'Agent Mode AI test generation (80%)',dims:['Q','C'],bench:'65% manual-to-automated shift',src:'Forrester TEI'},
+  testCompression:{label:'Test Compression',v12:'Collection Runner in CI/CD pipelines',dims:['Q','R'],bench:'95% regression time reduction',src:'Forrester TEI'},
+  avoidedRework:{label:'Avoided Rework',v12:'Private API Network prevents duplicates',dims:['C'],bench:'34% can\'t discover existing APIs',src:'State of API 2025'}
 };
 
 function pickAud(a){
@@ -667,7 +667,7 @@ function refreshPreview(){
   const top3=Object.entries(r.bva).sort((a,b)=>b[1]-a[1]).slice(0,3);
   $('previewDrivers').innerHTML=top3.map(([k,val])=>{
     const m=driverMeta[k]||{label:k,v12:''};
-    return'<div class="flex items-start gap-3"><div class="w-5 h-5 rounded-full bg-postman/10 flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3 h-3 text-postman" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><div class="flex-1"><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-800">'+m.label+'</span><span class="text-sm font-semibold text-postman">'+fmShort(val)+'</span></div><div class="text-[11px] text-gray-400">v12: '+m.v12+'</div></div></div>';
+    return'<div class="flex items-start gap-3"><div class="w-5 h-5 rounded-full bg-postman/10 flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3 h-3 text-postman" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><div class="flex-1"><div class="flex items-center justify-between"><span class="text-sm font-medium text-gray-800">'+m.label+'</span><span class="text-sm font-semibold text-postman">'+fmShort(val)+'</span></div><div class="text-[11px] text-gray-400">v12: '+m.v12+'</div>'+(m.bench?'<div class="text-[10px] text-gray-400 mt-0.5"><span class="text-gray-300">Assumes:</span> '+m.bench+' <span class="text-gray-300">- '+m.src+'</span></div>':'')+'</div></div>';
   }).join('');
 }
 
